@@ -1,0 +1,259 @@
+<html>
+	<head>
+        <title>Demo - Z-Distribution</title>
+        <meta charset="utf-8"/>
+        <script src="chartjs/Chart.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="chartjs/Chart.min.css">
+
+        <script src="../src/utils.js"></script>
+        <script src="../src/distributions/z_distribution.js"></script>
+
+        <style>
+            table {margin: 0 auto; background-color: #cccccc; padding: 5px 10px; }
+            table input, table select {width: 100%;}
+            table td {padding: 0 10px;}
+            input[type=button] {cursor: pointer;}
+            input:disabled, select:disabled {cursor: no-drop;}
+            tr.separator td {border-top: 1px solid #868686;}
+            #additional-options {font-size: 12px; overflow-x: hidden; overflow-y: auto; width: 240px; max-height: 85px; text-align: right;}
+            #additional-options input, #additional-options select {width: 150px;}
+            #learning-rate-label, #momentum-label, #gamma-label, #beta-1-label, #beta-2-label {display:none;}
+            canvas {-moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; margin: 0 auto; max-width: 800px; max-height: 500px; }
+        </style>
+        <script>
+            var chart = null;
+            function update() {
+                var marks = document.getElementById("dataset").value;
+                if(marks.match("^[1-6]*$") == null) {
+                    marks = marks.replace(new RegExp("[^0-6]", "g"), "");
+                    document.getElementById("dataset").value = marks;
+                } else {
+                    var k1 = parseInt(document.getElementById("dataset-k-1").value),
+                        k2 = parseInt(document.getElementById("dataset-k-2").value),
+                        probabilityOption = document.getElementById("probability-option").value,
+
+                        k1View = document.getElementById("dataset-k-1-view"),
+                        k2View = document.getElementById("dataset-k-2-view"),
+
+                        diagramDistribution = [],
+                        diagramLabels = [],
+                        prev = 0.0,
+                        diagramData = [],
+
+                        result= 0, 
+                        arr = [], 
+                        mean = 0,
+                        sd = 0;
+                    marks.split("").forEach(function(mark) {
+                        arr.push(parseInt(mark));
+                    });
+                    mean = SMathJsUtils.mean(arr);
+                    sd = SMathJsUtils.standardDeviationFromArray(mean, arr);
+
+                    document.getElementById("result-mean").innerHTML = "Mean (μ): " + mean.toFixed(3);
+                    document.getElementById("result-sd").innerHTML = "SD (σ): " + sd.toFixed(3);
+                                        
+                    for(var i = -2.0; i <= 12.0; i+=0.1) {
+                        diagramLabels.push(parseFloat(i.toFixed(1)));
+                        var value = ZDistribution.probabilityBelowEqual(mean, sd, parseFloat(i.toFixed(1)));
+                        value -= prev;
+                        prev += value;    
+                        diagramDistribution.push(value);    
+                    }
+                   
+                    switch (probabilityOption) {
+                        case "1":
+                            k1View.style.visibility = "visible";
+                            k2View.style.visibility = "hidden";
+                            var highlightData = [], count = 0;
+                            for(var i = -2.0; i <= 12.0; i+=0.1) {
+                                if(i.toFixed(1) <= (k1-1)) {
+                                    highlightData[count] = diagramDistribution[count];
+                                }
+                                count++;
+                            }
+                            diagramData.push({
+                                data: highlightData,
+                                backgroundColor: "rgba(250, 146, 0, 1)",
+                                borderColor: "rgba(250, 146, 0, 1)",
+                                borderWidth: 0,
+                                lineTension: 0
+                            });
+                            result = ZDistribution.probabilityBelow(mean, sd, k1); 
+                            break;
+                        case "2":
+                            k1View.style.visibility = "visible";
+                            k2View.style.visibility = "hidden";
+                            var highlightData = [], count = 0;
+                            for(var i = -2.0; i <= 12.0; i+=0.1) {
+                                if(i.toFixed(1) <= k1) {
+                                    highlightData[count] = diagramDistribution[count];
+                                }
+                                count++;
+                            }
+                            diagramData.push({
+                                data: highlightData,
+                                backgroundColor: "rgba(250, 146, 0, 1)",
+                                borderColor: "rgba(250, 146, 0, 1)",
+                                borderWidth: 0,
+                                lineTension: 0
+                            });
+                            result = ZDistribution.probabilityBelowEqual(mean, sd, k1);
+                            break;
+                        case "3":
+                            k1View.style.visibility = "visible";
+                            k2View.style.visibility = "hidden";
+                            var highlightData = [], count = 0;
+                            for(var i = -2.0; i <= 12.0; i+=0.1) {
+                                if(i.toFixed(1) >= (k1+1)) {
+                                    highlightData[count] = diagramDistribution[count];
+                                }
+                                count++;
+                            }
+                            diagramData.push({
+                                data: highlightData,
+                                backgroundColor: "rgba(250, 146, 0, 1)",
+                                borderColor: "rgba(250, 146, 0, 1)",
+                                borderWidth: 0,
+                                lineTension: 0
+                            });
+                            result = ZDistribution.probabilityAbove(mean, sd, k1);
+							break;
+                        case "4":
+                            k1View.style.visibility = "visible";
+                            k2View.style.visibility = "hidden";
+                            var highlightData = [], count = 0;
+                            for(var i = -2.0; i <= 12.0; i+=0.1) {
+                                if(i.toFixed(1) >= k1) {
+                                    highlightData[count] = diagramDistribution[count];
+                                }
+                                count++;
+                            }
+                            diagramData.push({
+                                data: highlightData,
+                                backgroundColor: "rgba(250, 146, 0, 1)",
+                                borderColor: "rgba(250, 146, 0, 1)",
+                                borderWidth: 0,
+                                lineTension: 0
+                            });
+                            result = ZDistribution.probabilityAboveEqual(mean, sd, k1);
+                            break;
+                        case "5":
+                            k1View.style.visibility = "visible";
+                            k2View.style.visibility = "visible";
+                            var highlightData = [], count = 0;
+                            for(var i = -2.0; i <= 12.0; i+=0.1) {
+                                if(i.toFixed(1) >= k1 && i.toFixed(1) <= k2) {
+                                    highlightData[count] = diagramDistribution[count];
+                                }
+                                count++;
+                            }
+                            diagramData.push({
+                                data: highlightData,
+                                backgroundColor: "rgba(250, 146, 0, 1)",
+                                borderColor: "rgba(250, 146, 0, 1)",
+                                borderWidth: 0,
+                                lineTension: 0
+                            });
+                            result = ZDistribution.probabilityInner(mean, sd, k1, k2);
+                            break;
+                        case "6":
+                            k1View.style.visibility = "visible";
+                            k2View.style.visibility = "visible";
+                            var highlightData = [], count = 0;
+                            for(var i = -2.0; i <= 12.0; i+=0.1) {
+                                if(i.toFixed(1) <= k1 || i.toFixed(1) >= k2) {
+                                    highlightData[count] = diagramDistribution[count];
+                                }
+                                count++;
+                            }
+                            diagramData.push({
+                                data: highlightData,
+                                backgroundColor: "rgba(250, 146, 0, 1)",
+                                borderColor: "rgba(250, 146, 0, 1)",
+                                borderWidth: 0,
+                                lineTension: 0
+                            });
+                            result = ZDistribution.probabilityOuter(mean, sd, k1, k2);
+                            break;
+                    }
+                    diagramData.push({
+                        data: diagramDistribution,
+                        borderColor: "rgba(51, 51, 51, 1)",
+                        borderWidth: 0,
+					    lineTension: 0
+                    });
+
+                    document.getElementById("result-x").innerHTML = "Result: " + result.toFixed(3);
+                    
+                    var ctx = document.getElementById("canvas");
+                    ctx.getContext('2d').clearRect(0, 0, ctx.width, ctx.height);
+                    if(chart != null) {
+                        chart.destroy();
+                    }
+                    chart = new Chart(ctx, {
+			            type: 'line',
+                        data: {
+                            labels: diagramLabels,
+                            datasets: diagramData 
+                        },
+                        options: {
+                            legend: {
+                                display: false
+                            },
+                            elements: {
+                                point:{
+                                    radius: 0
+                                }
+                            },
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero:true
+                                    }
+                                }],
+                                xAxes: [{
+                                    ticks: {
+                                        callback: function(value, index, values) {
+                                            return parseFloat(value).toFixed(0);
+                                        },
+                                        autoSkip: true,
+                                        maxTicksLimit: 15,
+                                        stepSize: 1
+                                    }
+                                }]
+                            }
+                        }
+                    });
+                }
+            };
+        </script>
+    </head>
+    <body onload="update();">
+        <table>
+            <tr>
+                <td>Dataset (Marks)</td>
+                <td colspan="2"><select id ="probability-option" onchange="update()">
+                        <option value="1">P(X &lt; x)</option>
+                        <option value="2">P(X &lt;= x)</option>
+                        <option value="3">P(X > x)</option>
+                        <option value="4">P(X >= x)</option>
+                        <option value="5">P(k1 &lt;= X => k2)</option>
+                        <option value="6">P(k1 >= X =&lt; k2)</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td ><input type="text" id="dataset" value="231432322341452" oninput="update()"></td>
+                <td id="dataset-k-1-view">k1:<input type="number" min="1" max="6" id="dataset-k-1" value="3" oninput="update()"></td>
+                <td id="dataset-k-2-view">k2:<input type="number" min="1" max="6" id="dataset-k-2" value="5" oninput="update()"></td>
+            </tr>
+            <tr>
+                <td id="result-mean">Mean (μ): X</td>
+                <td id="result-sd">SD (σ): X</td>
+                <td id="result-x">Result: X</td>
+            </tr>
+        </table>   
+        <canvas id="canvas"></canvas>      
+    </body>
+</html>

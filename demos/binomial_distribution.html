@@ -1,0 +1,174 @@
+<html>
+	<head>
+        <title>Demo - Binomial Distribution</title>
+        <meta charset="utf-8"/>
+        <script src="chartjs/Chart.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="chartjs/Chart.min.css">
+
+        <script src="../src/utils.js"></script>
+        <script src="../src/distributions/binomial_distribution.js"></script>
+
+        <style>
+            table {margin: 0 auto; background-color: #cccccc; padding: 5px 10px; }
+            table input, table select {width: 100%;}
+            table td {padding: 0 10px;}
+            input[type=button] {cursor: pointer;}
+            input:disabled, select:disabled {cursor: no-drop;}
+            tr.separator td {border-top: 1px solid #868686;}
+            #additional-options {font-size: 12px; overflow-x: hidden; overflow-y: auto; width: 240px; max-height: 85px; text-align: right;}
+            #additional-options input, #additional-options select {width: 150px;}
+            #learning-rate-label, #momentum-label, #gamma-label, #beta-1-label, #beta-2-label {display:none;}
+            canvas {-moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; margin: 0 auto; max-width: 800px; max-height: 500px; }
+        </style>
+        <script>
+            var chart = null;
+            function update() {
+                var sampleSize = parseInt(document.getElementById("dataset-sample-size").value),
+                    percentage = parseFloat(document.getElementById("dataset-percentage").value),
+                    k1 = parseInt(document.getElementById("dataset-k-1").value),
+                    k2 = parseInt(document.getElementById("dataset-k-2").value),
+                    probabilityOption = document.getElementById("probability-option").value,
+                    
+                    k1View = document.getElementById("dataset-k-1-view"),
+                    k2View = document.getElementById("dataset-k-2-view"),
+
+                    resultView = document.getElementById("result-view"),
+                    diagramLabels = [],
+                    diagramData = [],
+                    diagramBarColor = [];
+
+                for(var i = 0; i <= sampleSize; i++) {
+                    diagramLabels.push(i);
+                    diagramData.push(BinomialDistribution.pdf(percentage, sampleSize, i));
+                    diagramBarColor.push("rgba(51, 51, 51, 1)");
+                }
+                
+                switch (probabilityOption) {
+                    case "1":
+                        k1View.style.visibility = "hidden";
+                        k2View.style.visibility = "hidden";
+                        var value = parseInt(BinomialDistribution.expectedValue(percentage, sampleSize));
+                        resultView.innerHTML = value.toFixed(3);
+                        diagramBarColor[value] = "rgba(250, 146, 0, 1)";
+                        break;
+                    case "2":
+                        k1View.style.visibility = "visible";
+                        k2View.style.visibility = "hidden";
+                        diagramBarColor[k1] = "rgba(250, 146, 0, 1)";
+                        resultView.innerHTML = BinomialDistribution.pdf(percentage, sampleSize, k1).toFixed(3);
+                        break;
+                    case "3":
+                        k1View.style.visibility = "visible";
+                        k2View.style.visibility = "hidden";
+                        for(var i = 0; i < k1; i++) {
+                            diagramBarColor[i] = "rgba(250, 146, 0, 1)";
+                        }
+                        resultView.innerHTML = BinomialDistribution.cumulativeProbabilityBelow(percentage, sampleSize, 0, k1).toFixed(3);
+                        break;
+                    case "4":
+                        k1View.style.visibility = "visible";
+                        k2View.style.visibility = "hidden";
+                        for(var i = 0; i <= k1; i++) {
+                            diagramBarColor[i] = "rgba(250, 146, 0, 1)";
+                        }
+                        resultView.innerHTML = BinomialDistribution.cumulativeProbabilityBelowEqual(percentage, sampleSize, 0, k1).toFixed(3);
+                        break;
+                    case "5":
+                        k1View.style.visibility = "visible";
+                        k2View.style.visibility = "hidden";
+                        for(var i = (k1+1); i <= sampleSize; i++) {
+                            diagramBarColor[i] = "rgba(250, 146, 0, 1)";
+                        }
+                        resultView.innerHTML = BinomialDistribution.cumulativeProbabilityAbove(percentage, sampleSize, 0, k1).toFixed(3);
+                        break;
+                    case "6":
+                        k1View.style.visibility = "visible";
+                        k2View.style.visibility = "hidden";
+                        for(var i = k1; i <= sampleSize; i++) {
+                            diagramBarColor[i] = "rgba(250, 146, 0, 1)";
+                        }
+                        resultView.innerHTML = BinomialDistribution.cumulativeProbabilityAboveEqual(percentage, sampleSize, 0, k1).toFixed(3);
+                        break;
+                    case "7":
+                        k1View.style.visibility = "visible";
+                        k2View.style.visibility = "visible";
+                        for(var i = k1; i <= k2; i++) {
+                            diagramBarColor[i] = "rgba(250, 146, 0, 1)";
+                        }
+                        resultView.innerHTML = BinomialDistribution.cumulativeProbabilityInner(percentage, sampleSize, k1, k2).toFixed(3);
+                        break;
+                    case "8":
+                        k1View.style.visibility = "visible";
+                        k2View.style.visibility = "visible";
+                        for(var i = 0; i <= sampleSize; i++) {
+                            if(i < k1 || i > k2) {
+                                diagramBarColor[i] = "rgba(250, 146, 0, 1)";
+                            }
+                        }
+                        resultView.innerHTML = BinomialDistribution.cumulativeProbabilityOuter(percentage, sampleSize, k1, k2).toFixed(3);
+                        break;
+                }
+
+                var ctx = document.getElementById("canvas");
+                ctx.getContext('2d').clearRect(0, 0, ctx.width, ctx.height);
+                if(chart != null) {
+                    chart.destroy();
+                }
+                chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: diagramLabels,
+                        datasets: [{
+                            label: "",
+                            data: diagramData,
+                            backgroundColor: diagramBarColor,
+                            borderColor: diagramBarColor,
+                            borderWidth: 1
+                        }] 
+                    },
+                    options: {
+                        legend: {
+                            display: false
+                        },
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero:true
+                                }
+                            }]
+                        }
+                    }
+                });
+            }
+        </script>
+    </head>
+    <body onload="update();">
+        <table>
+            <tr>
+                <td>Sample-Size (n)</td>
+                <td>Percentage (p)</td>
+                <td colspan="2">
+                    <select id ="probability-option" onchange="update()">
+                        <option value="1">E</option>
+                        <option value="2">P(X = x)</option>
+                        <option value="3">P(X &lt; x)</option>
+                        <option value="4">P(X &lt;= x)</option>
+                        <option value="5">P(X > x)</option>
+                        <option value="6">P(X >= x)</option>
+                        <option value="7">P(k1 &lt;= X => k2)</option>
+                        <option value="8">P(k1 > X &lt; k2)</option>
+                    </select>
+                </td>
+                <td>Result</td>
+            </tr>
+            <tr>
+                <td><input type="number" min="10" max="50" id="dataset-sample-size" value="20" oninput="update()"></td>
+                <td><input type="number" min="0.1" max="0.9" step="0.1" id="dataset-percentage" value="0.2" oninput="update()"></td>
+                <td id="dataset-k-1-view">k1:<input type="number" min="0" max="50" id="dataset-k-1" value="0" oninput="update()"></td>
+                <td id="dataset-k-2-view">k2:<input type="number" min="0" max="50" id="dataset-k-2" value="8" oninput="update()"></td>
+                <td id="result-view">XXX</td>
+            </tr>
+        </table>   
+        <canvas id="canvas"></canvas>      
+    </body>
+</html>

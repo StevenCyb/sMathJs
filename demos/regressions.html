@@ -1,0 +1,386 @@
+<html>
+	<head>
+        <title>Demo - Regressions</title>
+        <meta charset="utf-8"/>
+        <script src="chartjs/Chart.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="chartjs/Chart.min.css">
+
+        <script src="../src/utils.js"></script>
+        <script src="../src/regression/optimizer.js"></script>
+        <script src="../src/regression/regression.js"></script>
+        <style>
+            table {margin: 0 auto; background-color: #cccccc; padding: 5px 10px; }
+            table input, table select {width: 100%;}
+            table td {padding: 0 10px;}
+            input[type=button] {cursor: pointer;}
+            input:disabled, select:disabled {cursor: no-drop;}
+            tr.separator td {border-top: 1px solid #868686;}
+            #additional-options {font-size: 12px; overflow-x: hidden; overflow-y: auto; width: 240px; max-height: 85px; text-align: right;}
+            #additional-options input, #additional-options select {width: 150px;}
+            #learning-rate-label, #momentum-label, #gamma-label, #beta-1-label, #beta-2-label {display:none;}
+            canvas {-moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; margin: 0 auto; max-width: 800px; max-height: 500px; }
+        </style>
+        <script>
+            var chart = null, 
+                chartFittingData = [], fittingData = [], 
+                maxValue = 100, stopLoop = false, worker = undefined, 
+                degreeOption = undefined, selectedOptimizer = undefined, selectedGradientDescentVariants = undefined,
+                learningRate = 0, momentum = 0, gamma = 0, beta1 = 0, beta2 = 0;
+            function interactionMode(state) {
+                var inputs = document.getElementsByTagName("input");
+                var selects = document.getElementsByTagName("select");
+                for (var i = 0; i < inputs.length; i++) {
+                    inputs[i].disabled = !state;
+                }
+                for (var i = 0; i < selects.length; i++) {
+                    selects[i].disabled = !state;
+                }
+            }
+            function generateRandomData() {
+                interactionMode(false);
+                chartFittingData = [];
+                labels = [];
+                var amount = document.getElementById("amount-option").value;
+                var _x = 0, _y = 0;
+                for(var i=0; i<amount; i++) {
+                    _x = Math.floor(Math.random() * (maxValue + 1));
+                    _y = Math.floor(Math.random() * (maxValue + 1));
+                    chartFittingData.push({
+                        x: _x,
+                        y: _y
+                    });
+                    fittingData.push([_x, _y]);
+                }
+                drawCharts();
+                interactionMode(true);
+            }
+            function fileLoad(element, event) {
+                interactionMode(false);
+                try {
+                    var rows = event.target.result.split('\n');
+                    for(var i=0; i<rows.length; i++) {
+                        if(rows[i] != "") {
+                            rows[i] = rows[i].split(';');
+                            rows[i] = [parseInt(rows[i][0]), parseInt(rows[i][1])];
+                        }
+                    }
+                    chartFittingData = [];
+                    fittingData = [];
+                    for(var i=0; i<rows.length; i++) {
+                        fittingData.push([rows[i][0], rows[i][1]]);
+                        chartFittingData.push({x: rows[i][0], y: rows[i][1]});
+                    }
+                } catch(e) {}
+                drawCharts();
+                interactionMode(true);
+            }
+            function loadData(event, fileHandler) { 
+                interactionMode(false);
+                // Base on https://stackoverflow.com/questions/750032/reading-file-contents-on-the-client-side-in-javascript-in-various-browsers
+                try {
+                    if (typeof window.FileReader !== 'function') {throw ("The file API isn't supported on this browser.");}
+                    let input = event.target;
+                    if (!input) {throw ("The browser does not properly implement the event object");} 
+                    if (!input.files) {throw ("This browser does not support the `files` property of the file input.");}
+                    if (!input.files[0]) {throw "No file selected";}
+                    let file = input.files[0];
+                    let fr = new FileReader();
+                    fr.onload = fileHandler;
+                    fr.readAsText(file); 
+                } catch(e) {}
+                interactionMode(true);
+            }
+            function solveRegression() {
+                interactionMode(false);
+                degreeOption = parseInt(document.getElementById("degree-option").value);
+                worker = new PolynomialRegression(degreeOption);
+                worker.bestFit(fittingData);
+                drawCharts();
+                interactionMode(true);
+            }
+            function toggleFitting(trainToggleButton) {
+                if(trainToggleButton.value == "Train") {
+                    degreeOption = parseInt(document.getElementById("degree-option").value);
+                    selectedOptimizer = document.getElementById("optimizer-option").value;
+                    selectedGradientDescentVariants = document.getElementById("gradient-descent-variant").value;
+                    learningRate = parseFloat(document.getElementById("learning-rate").value);
+                    momentum = parseFloat(document.getElementById("momentum").value);
+                    gamma = parseFloat(document.getElementById("gamma").value);
+                    beta1 = parseFloat(document.getElementById("beta-1").value);
+                    beta2 = parseFloat(document.getElementById("beta-2").value);
+                    SMathJsUtils.isValidNumber(learningRate);
+                    SMathJsUtils.isValidNumber(momentum);
+                    if(fittingData.length < 2 || selectedOptimizer == "None" || selectedGradientDescentVariants == "None" ||
+                                learningRate >= 1.0 || learningRate <= 0.0 || 
+                                momentum >= 1.0 || momentum <= 0.0 || 
+                                gamma >= 1.0 || gamma <= 0.0 || 
+                                beta1 >= 1.0 || beta1 <= 0.0 ||
+                                beta2 >= 1.0 || beta2 <= 0.0
+                            ) {
+                        return;
+                    }
+                    var optimizer = null;
+                    switch (selectedOptimizer) {
+                        case "Vanilla Gradient Descent":
+                            optimizer = new VanillaOptimizer(learningRate);
+                            break;
+                        case "Momentum Gradient Descent":
+                            optimizer = new MomentumOptimizer(learningRate, momentum);
+                            break;
+                        case "Adagrad Gradient Descent":
+                            optimizer = new AdagradOptimizer(learningRate);
+                            break;
+                        case "Rmsprop Gradient Descent":
+                            optimizer = new RmspropOptimizer(learningRate, gamma);
+                            break;
+                        case "Adam Gradient Descent":
+                            optimizer = new AdamOptimizer(learningRate, beta1, beta2);
+                            break;
+                        case "Adamx Gradient Descent":
+                            optimizer = new AdamxOptimizer(learningRate, beta1, beta2);
+                            break;
+                        case "Adadelta Gradient Descent":
+                            optimizer = new AdadeltaOptimizer(gamma);
+                            break;
+                        case "Nesterov Gradient Descent":
+                            optimizer = new NesterovOptimizer(learningRate, gamma);
+                            break;
+                        case "Nadam Gradient Descent":
+                            optimizer = new NadamOptimizer(learningRate, beta1, beta2);
+                            break;
+                    }
+                    worker = new PolynomialRegression(degreeOption, optimizer);
+                    trainToggleButton.value = "Stop";
+                    interactionMode(false);
+                    trainToggleButton.disabled = false;
+                    stopLoop = false;
+                    loop();
+                } else {
+                    stopLoop = true;
+                }
+            };
+            function loop() {
+                var trainData = [];
+                if(selectedGradientDescentVariants == "STOCHASTIC_GRADIENT_DESCENT") {
+                    trainData.push(fittingData[Math.floor(Math.random() * fittingData.length)]);
+                } else if(selectedGradientDescentVariants.startsWith("MINI_BATCH_GRADIENT_DESCENT_")) {
+                    var amount = 0;
+                    switch (selectedGradientDescentVariants) {
+                        case "MINI_BATCH_GRADIENT_DESCENT_5":
+                            amount = Math.round(fittingData.length * 0.05);
+                            break;
+                        case "MINI_BATCH_GRADIENT_DESCENT_10":
+                            amount = Math.round(fittingData.length * 0.1);
+                            break;
+                        case "MINI_BATCH_GRADIENT_DESCENT_20":
+                            amount = Math.round(fittingData.length * 0.2);
+                            break;
+                        case "MINI_BATCH_GRADIENT_DESCENT_50":
+                            amount = Math.round(fittingData.length * 0.5);
+                            break;
+                    }
+                    var indexList = [];
+                    for(var i=0; i<=amount; i++) {
+                        var index = Math.floor(Math.random() * fittingData.length);
+                        while(indexList.indexOf(index) != -1) {
+                            index = Math.floor(Math.random() * fittingData.length);
+                        }
+                        trainData.push(fittingData[index]);
+                    }
+                } else if(selectedGradientDescentVariants == "BATCH_GRADIENT_DESCENT") {
+                    trainData = fittingData;
+                }
+                try {
+                    worker.train(trainData);
+                } catch(e) {
+                    alert("Training failed - Try to use a smaller learning rate." + e);
+                    stopLoop = true;
+                }
+                drawCharts();
+                if(!stopLoop) {
+                    setTimeout(loop, parseInt(document.getElementById("loop-speed").value));
+                } else {
+                    document.getElementById("train-button").value = "Train";
+                    interactionMode(true);
+                }
+            }
+            function drawCharts() {
+                var plotDataset = [], fittingLine = [], labelsData = [], chartType = "scatter";
+                var ctx = document.getElementById("canvas");
+                ctx.getContext('2d').clearRect(0, 0, ctx.width, ctx.height);
+                if(chart != null) {
+                    chart.destroy();
+                }
+                if(worker != null) {
+                    for(var i=0; i<= 101; i++) {
+                        labelsData.push(i);
+                        var value = worker.predict(i);
+                        if(value >= 0 && value <= 100) {
+                            fittingLine[i] = value;
+                        }
+                    }
+                    chartType = "";
+                    plotDataset.push({data: fittingLine, fill: false, pointRadius:0, type:'line', backgroundColor: "rgba(218,83,79, .7)", borderColor: "rgba(218,83,79, .7)"});
+                }
+                plotDataset.push({data: chartFittingData,  type:'bubble'});
+                chart = new Chart(ctx, {
+                    type: chartType,
+                    data: {datasets: plotDataset, labels: labelsData},
+                    options: {
+                        animation: {duration: 0},
+                        legend: {display: false},
+                        scales: {
+                            xAxes: [{
+                                ticks: {
+                                    suggestedMin: 0,
+                                    beginAtZero: true,
+                                    maxTicksLimit: 11,
+                                    stepSize: 10,
+                                    stepValue: 10,
+                                    steps: 11,
+                                    max: 100
+                                }
+                            }],
+                            yAxes: [{
+                                ticks: {
+                                    suggestedMin: 0,
+                                    beginAtZero: true,
+                                    maxTicksLimit: 11,
+                                    stepSize: 10,
+                                    stepValue: 10,
+                                    steps: 11,
+                                    max: 100
+                                }
+                            }]
+                        }
+                    }
+                });
+            }
+            function updateOptionView() {
+                selectedOptimizer = document.getElementById("optimizer-option").value;
+                var code = 0;
+                code += (selectedOptimizer == "Vanilla Gradient Descent") ?  1 : 0;
+                code += (selectedOptimizer == "Momentum Gradient Descent") ?  3 : 0;
+                code += (selectedOptimizer == "Adagrad Gradient Descent")  ?  1 : 0;
+                code += (selectedOptimizer == "Rmsprop Gradient Descent")  ?  5 : 0;
+                code += (selectedOptimizer == "Adam Gradient Descent")     ? 25 : 0;
+                code += (selectedOptimizer == "Adamx Gradient Descent")    ? 25 : 0;
+                code += (selectedOptimizer == "Adadelta Gradient Descent")  ?  4 : 0;
+                code += (selectedOptimizer == "Nesterov Gradient Descent")  ?  5 : 0;
+                code += (selectedOptimizer == "Nadam Gradient Descent")    ? 25 : 0;
+                document.getElementById("learning-rate-label").style.display = 	((code & 1) != 0)?"block":"none";
+                document.getElementById("momentum-label").style.display =   	((code & 2) != 0)?"block":"none";
+                document.getElementById("gamma-label").style.display    =   	((code & 4) != 0)?"block":"none";
+                document.getElementById("beta-1-label").style.display   =   	((code & 8) != 0)?"block":"none";
+                document.getElementById("beta-2-label").style.display   =   	((code & 16) != 0)?"block":"none";
+            }
+        </script>
+    </head>
+    <body onload="generateRandomData(); updateOptionView();">
+        <table>
+            <tr>
+                <td>Degree:</td>
+                <td colspan="2">
+                    <select id ="degree-option">
+                        <option selected value="0">Polynomial 0-Degree (Zero-Slope-Linear)</option>
+                        <option value="1">Polynomial 1-Degree (Linear)</option>
+                        <option value="2">Polynomial 2-Degree (Quadratic)</option>
+                        <option value="3">Polynomial 3-Degree (Cubic)</option>
+                        <option value="4">Polynomial 4-Degree</option>
+                        <option value="5">Polynomial 5-Degree</option>
+                        <option value="6">Polynomial 6-Degree</option>
+                        <option value="7">Polynomial 7-Degree</option>
+                    </select>
+                </td>
+               <td id="optimizer-options" rowspan="5">
+                   <div id="additional-options">
+                    <label for="loop-speed">Iteration-Speed: 
+                        <select id ="loop-speed">
+                            <option selected>10</option>
+                            <option>100</option>
+                            <option>1000</option>
+                            <option>5000</option>
+                        </select>
+                    </label>
+                    <label for="learning-rate" id="learning-rate-label">Learning-Rate: 
+                        <input type="number" name="learning-rate" id="learning-rate" min="0.00000001" max="0.99999999" step="0,00000001" value="0.00000001">
+                    </label>
+                    <label for="momentum" id="momentum-label">Momentum: 
+                        <input type="number" name="momentum" id="momentum" min="0.01" max="0.99" step="0.01" value="0.9">
+                    </label>
+                    <label for="gamma" id="gamma-label">Gamma: 
+                        <input type="number" name="gamma" id="gamma" min="0.01" max="0.99" step="0.01" value="0.9">
+                    </label>
+                    <label for="beta-1" id="beta-1-label">Beta-1: 
+                        <input type="number" name="beta-1" id="beta-1" min="0.001" max="0.999" step="0.001" value="0.9">
+                    </label>
+                    <label for="beta-2" id="beta-2-label">Beta-2: 
+                        <input type="number" name="beta-2" id="beta-2" min="0.001" max="0.999" step="0.001" value="0.999">
+                    </label>
+                   </div>
+               </td> 
+            </tr>
+            <tr>
+                <td>Variant:</td>
+                <td colspan="2">
+                    <select id ="gradient-descent-variant">
+                        <option>None</option>
+                        <option value="STOCHASTIC_GRADIENT_DESCENT">Stochastic gradient descent (1x)</option>
+                        <option value="MINI_BATCH_GRADIENT_DESCENT_5">Mini-batch gradient descent (5%)</option>
+                        <option value="MINI_BATCH_GRADIENT_DESCENT_10">Mini-batch gradient descent (10%)</option>
+                        <option value="MINI_BATCH_GRADIENT_DESCENT_20">Mini-batch gradient descent (20%)</option>
+                        <option value="MINI_BATCH_GRADIENT_DESCENT_50">Mini-batch gradient descent (50%)</option>
+                        <option selected value="BATCH_GRADIENT_DESCENT">Batch gradient descent (all)</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Optimizer:</td>
+                <td colspan="2">
+                    <select id ="optimizer-option" onchange="updateOptionView();">
+                        <option>None</option>
+                        <option>Adadelta Gradient Descent</option>
+                        <option>Adagrad Gradient Descent</option>
+                        <option>Adam Gradient Descent</option>
+                        <option>Adamx Gradient Descent</option>
+                        <option>Momentum Gradient Descent</option>
+                        <option>Nadam Gradient Descent</option>
+                        <option>Nesterov Gradient Descent</option>
+                        <option>Rmsprop Gradient Descent</option>
+                        <option selected>Vanilla Gradient Descent</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <input type="button" id="train-button" value="Train" onclick="toggleFitting(this);">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <input type="button" id="solve-regression-button" value="Solve Regression" onclick="solveRegression();">
+                </td>
+            </tr>
+            <tr class="separator">
+                <td>Random:</td>
+                <td>
+                    <select id ="amount-option">
+                        <option value="5">5 samples</option>
+                        <option value="10">10 samples</option>
+                        <option value="50">50 samples</option>
+                        <option value="100" selected>100 samples</option>
+                        <option value="500">500 samples</option>
+                        <option value="1000">1000 samples</option>
+                    </select>
+                </td>
+                <td colspan="1">
+                    <input type="button" id="generate-random-data-button" value="Generate-Data" onclick="generateRandomData();">
+                </td>
+                <td>
+                    <input type="file" id="data-file" name="data-file" onchange="loadData(event, fileLoad.bind(this, 'contents'))" accept=".csv">
+                </td>
+            </tr>
+        </table>   
+        <canvas id="canvas"></canvas>      
+    </body>
+</html>

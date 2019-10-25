@@ -1,0 +1,259 @@
+<html>
+	<head>
+        <title>Demo - F-Distribution</title>
+        <meta charset="utf-8"/>
+        <script src="chartjs/Chart.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="chartjs/Chart.min.css">
+
+        <script src="../src/utils.js"></script>
+        <script src="../src/distributions/f_distribution.js"></script>
+
+        <style>
+            table {margin: 0 auto; background-color: #cccccc; padding: 5px 10px; }
+            table input, table select {width: 100%;}
+            table td {padding: 0 10px;}
+            input[type=button] {cursor: pointer;}
+            input:disabled, select:disabled {cursor: no-drop;}
+            tr.separator td {border-top: 1px solid #868686;}
+            #additional-options {font-size: 12px; overflow-x: hidden; overflow-y: auto; width: 240px; max-height: 85px; text-align: right;}
+            #additional-options input, #additional-options select {width: 150px;}
+            #learning-rate-label, #momentum-label, #gamma-label, #beta-1-label, #beta-2-label {display:none;}
+            canvas {-moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; margin: 0 auto; max-width: 800px; max-height: 500px; }
+        </style>
+        <script>
+            var chart = null;
+            function update() {
+                var marks1 = document.getElementById("population-1-data").value,
+                    marks2 = document.getElementById("population-2-data").value,
+                    confidence = document.getElementById("confidence").value;
+                if(marks1.match("^[1-6]*$") == null) {
+                    marks1 = marks1.replace(new RegExp("[^0-6]", "g"), "");
+                    document.getElementById("population-1-data").value = marks1;
+                } else if(marks2.match("^[1-6]*$") == null) {
+                    marks2 = marks2.replace(new RegExp("[^0-6]", "g"), "");
+                    document.getElementById("population-2-data").value = marks2;
+                } else {
+                    var population1Data = [], population2Data = [],
+                        degreeOfFreedom1 = 0, degreeOfFreedom2 = 0,
+                        mean1 = 0, mean2 = 0, mean1Index = 0, mean2Index = 0,
+                        fRatio = 0, fRatioIndex = 0,
+                        mode = 0, modeIndex = 0,
+
+                        diagramLabels = [],
+                        diagramDistribution = [],
+                        highlightData1 = [], highlightData2 = [],
+                        prev = 0.0,
+                        diagramData = [],
+                        counter = 0;
+
+                    marks1.split("").forEach(function(mark) {
+                        population1Data.push(parseInt(mark));
+                    });
+                    marks2.split("").forEach(function(mark) {
+                        population2Data.push(parseInt(mark));
+                    });
+
+                    degreeOfFreedom1 = FDistribution.degreeOfFreedom(population1Data.length);
+                    degreeOfFreedom2 = FDistribution.degreeOfFreedom(population2Data.length);
+                    mean1 = FDistribution.mean(degreeOfFreedom1).toFixed(1);
+                    mean2 = FDistribution.mean(degreeOfFreedom2).toFixed(1);
+                    variance1 = SMathJsUtils.variance(SMathJsUtils.mean(population1Data), population1Data); 
+                    variance2 = SMathJsUtils.variance(SMathJsUtils.mean(population2Data), population2Data);
+                    fRatio = FDistribution.fRatio(variance1, variance2);
+                    mode = FDistribution.mode(degreeOfFreedom1, degreeOfFreedom2);
+                    
+                    var mergeHighlight = true;
+                    for(var i = 0.0; i <= 7.0; i+=0.1) {
+                        diagramLabels.push(parseFloat(i.toFixed(1)));
+                        var value = FDistribution.pdf(degreeOfFreedom1, degreeOfFreedom2, i);
+                        if(value <= (confidence / 100)) {
+                            highlightData1[counter] = value - prev;
+                        } else {
+                            if(mergeHighlight) {
+                                mergeHighlight = false;
+                                highlightData1[counter] = value - prev;
+                            }
+                            highlightData2[counter] = value - prev;
+                        }
+                        value -= prev;
+                        prev += value;
+                        diagramDistribution.push(value);
+                        if(i.toFixed(1) == mean1) {
+                            mean1Index = counter;
+                        }
+                        if(i.toFixed(1) == mean2) {
+                            mean2Index = counter;
+                        }
+                        if(i.toFixed(1) == fRatio.toFixed(1)) {
+                            fRatioIndex = counter;
+                        }
+                        if(i.toFixed(1) == mode.toFixed(1)) {
+                            modeIndex = counter;
+                        }
+                        counter ++;
+                    }
+
+                    diagramData.push({
+                        data: diagramDistribution,
+                        borderColor: "rgba(250, 146, 0, 1.0)",
+                        fill: false,
+                        borderWidth: 1,
+					    lineTension: 0
+                    });
+                    diagramData.push({
+                        data: highlightData1,
+                        backgroundColor: "rgba(119, 221, 119, 0.2)",
+                        borderColor: "rgba(119, 221, 119, 0.2)",
+                        borderWidth: 0,
+                        lineTension: 0
+                    });
+                    diagramData.push({
+                        data: highlightData2,
+                        backgroundColor: "rgba(255, 105, 97, 0.2)",
+                        borderColor: "rgba(255, 105, 97, 0.2)",
+                        borderWidth: 0,
+                        lineTension: 0
+                    });
+
+                    // MODIFIED PLUGIN from https://stackoverflow.com/questions/30256695/chart-js-drawing-an-arbitrary-vertical-line
+                    const verticalLinePlugin = {
+                        getLinePosition: function (chart, index) {
+                            const meta = chart.getDatasetMeta(0);
+                            const data = meta.data;
+                            return data[index]._model.x;
+                        },
+                        renderVerticalLine: function (chartInstance, lineOption) {
+                            const lineLeftOffset = this.getLinePosition(chartInstance, lineOption["index"]);
+                            if(lineLeftOffset != undefined) {
+                                const scale = chartInstance.scales['y-axis-0'];
+                                const context = chartInstance.chart.ctx;
+                                // render vertical line
+                                context.beginPath();
+                                context.strokeStyle = lineOption["color"];
+                                context.moveTo(lineLeftOffset, scale.top);
+                                context.lineTo(lineLeftOffset, scale.bottom);
+                                context.stroke();
+                                // write label
+                                context.fillStyle = lineOption["color"];
+                                context.textAlign = 'center';
+                                context.fillText(lineOption["text"], lineLeftOffset, (scale.bottom - scale.top) / 2 + scale.top);
+                            }
+                        },
+
+                        afterDatasetsDraw: function (chart, easing) {
+                            if (chart.config.lineAtIndex) {
+                                chart.config.lineAtIndex.forEach(lineOption => this.renderVerticalLine(chart, lineOption));
+                            }
+                        }
+                    };
+                    Chart.plugins.register(verticalLinePlugin);
+                    // END OF PLUGIN
+                    var ctx = document.getElementById("canvas");
+                    ctx.getContext('2d').clearRect(0, 0, ctx.width, ctx.height);
+                    if(chart != null) {
+                        chart.destroy();
+                    }
+                    chart = new Chart(ctx, {
+                        type: 'line',
+                        lineAtIndex: [
+                            {"index": mean1Index, "color": "rgb(188,133,163)", "text":""},
+                            {"index": mean2Index, "color": "rgb(132,180,200)", "text":""},
+                            {"index": fRatioIndex, "color": "rgb(255,57,46)", "text":""},
+                            {"index": modeIndex, "color": "rgb(68,92,60)", "text":""}
+                        ],
+                        data: {
+                            labels: diagramLabels,
+                            datasets: diagramData 
+                        },
+                        options: {
+                            legend: {
+                                display: false
+                            },
+                            elements: {
+                                point:{
+                                    radius: 0
+                                }
+                            },
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero:true
+                                    }
+                                }],
+                                xAxes: [{
+                                    ticks: {
+                                        callback: function(value, index, values) {
+                                            return parseFloat(value).toFixed(0);
+                                        },
+                                        autoSkip: true,
+                                        maxTicksLimit: 7,
+                                        stepSize: 1
+                                    }
+                                }]
+                            }
+                        }
+                    });
+
+                    document.getElementById("degree-of-freedom-1").innerHTML = degreeOfFreedom1;
+                    document.getElementById("degree-of-freedom-2").innerHTML = degreeOfFreedom2;
+                    document.getElementById("mean-1").innerHTML = mean1;
+                    document.getElementById("mean-2").innerHTML = mean2;
+                    document.getElementById("variance-1").innerHTML = variance1.toFixed(4);
+                    document.getElementById("variance-2").innerHTML = variance2.toFixed(4);
+                    document.getElementById("f-ratio").innerHTML = fRatio.toFixed(4);
+                    document.getElementById("mode").innerHTML = mode.toFixed(4);
+                    document.getElementById("significance").innerHTML = 100 - confidence;
+                }
+            };
+        </script>
+    </head>
+    <body onload="update();">
+        <table>
+            <tr>
+                <td colspan="3">Population Data</td>
+                <td style="color: rgba(250, 146, 0, 1); font-size: 22px; width: 20px;">&#x25A1;</td>
+                <td>DoF</td>
+                <td colspan="2">Mean</td>
+                <td>Variance</td>
+            </tr>
+            <tr>
+                <td>1:</td>
+                <td colspan="3"><input type="text" id="population-1-data" value="25322143313142352" oninput="update()"></td>
+                <td id="degree-of-freedom-1"></td>
+                <td id="mean-1"></td>
+                <td style="color: rgb(188,133,163);;">&#10074;</td>
+                <td id="variance-1"></td>
+            </tr>
+            <tr>
+                <td>2: </td>
+                <td colspan="3" ><input type="text" id="population-2-data" value="54263212432534546" oninput="update()"></td>
+                <td id="degree-of-freedom-2"></td>
+                <td id="mean-2"></td>
+                <td style="color: rgb(132,180,200);">&#10074;</td>
+                <td id="variance-2"></td>
+            </tr><tr></tr><tr></tr>
+            <tr>
+                <td colspan="2">Mode</td>
+                <td colspan="2">F-Ratio</td>
+                <td colspan="2">Confidence</td>
+                <td colspan="2">Significance</td>
+            </tr>
+            <tr>
+                <td id="mode"></td>
+                <td style="color: rgb(68,92,60);">&#10074;</td>
+                <td id="f-ratio"></td>
+                <td style="color: rgb(255,57,46);">&#10074;</td>
+                <td>
+                    <select id="confidence" onchange="update()">
+                        <option>10</option><option>20</option><option>30</option><option>40</option><option>50</option>
+                        <option>60</option><option>70</option><option>80</option><option selected>90</option>
+                    </select>
+                </td>
+                <td style="color: rgba(119, 221, 119, 0.6);">&#9640;</td>
+                <td id="significance"></td>
+                <td style="color: rgba(255, 105, 97, 0.6);">&#9640;</td>
+            </tr>
+        </table> 
+        <canvas id="canvas"></canvas>      
+    </body>
+</html>
