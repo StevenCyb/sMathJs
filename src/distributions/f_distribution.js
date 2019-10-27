@@ -4,7 +4,7 @@ class FDistribution {
 	 * Parameter:
 	 * degreeOfFreedom1: Degree of Freedom of first population
 	 * degreeOfFreedom2: Degree of Freedom of second population
-	 * x: To position x
+	 * x: Value to which calculate the PDF
      * stepSize: Step-size for this calculation (optional, default:0.1)
      * integralUpperBound: Upper bound for gamma integral because js can not use infinity (optional, default:100)
 	 * Return:
@@ -16,41 +16,54 @@ class FDistribution {
         SMathJsUtils.isValidNumber(x);
         SMathJsUtils.isValidNumber(stepSize);
         SMathJsUtils.isValidNumber(integralUpperBound);
-        var area = 0.0,
-            pdf = function(degreeOfFreedom1, degreeOfFreedom2, x, stepSize=0.1, integralUpperBound=100) {
-                SMathJsUtils.isValidNumber(degreeOfFreedom1);
-                SMathJsUtils.isValidNumber(degreeOfFreedom2);
-                SMathJsUtils.isValidNumber(x);
+        if(x < 0) {
+            return 0;
+        }
+        var gammaIntegral = function(z, stepSize=0.1, integralUpperBound=100) {
+                SMathJsUtils.isValidNumber(z);
                 SMathJsUtils.isValidNumber(stepSize);
                 SMathJsUtils.isValidNumber(integralUpperBound);
-                if(x < 0) {
-                    return NaN;
-                }
-                var gammaIntegral = function(z, stepSize=0.1, integralUpperBound=100) {
+                var area = 0.0,
+                    eulerGammaFunction = function(z, x) {
                         SMathJsUtils.isValidNumber(z);
-                        SMathJsUtils.isValidNumber(stepSize);
-                        SMathJsUtils.isValidNumber(integralUpperBound);
-                        var area = 0.0,
-                            eulerGammaFunction = function(z, x) {
-                                SMathJsUtils.isValidNumber(z);
-                                SMathJsUtils.isValidNumber(x);
-                                return Math.pow(x, z - 1) * Math.pow(Math.E, -1 * x);
-                            };
-                        for (var i = 0.0; i <= integralUpperBound; i += stepSize) {
-                            var l = eulerGammaFunction(z, i),
-                                h = eulerGammaFunction(z, i + stepSize);
-                            area += ((l + h) / 2) * stepSize;
-                        }
-                        return area;
+                        SMathJsUtils.isValidNumber(x);
+                        return Math.pow(x, z - 1) * Math.pow(Math.E, -1 * x);
                     };
-                return (gammaIntegral((degreeOfFreedom1 + degreeOfFreedom2) / 2, stepSize, integralUpperBound)* Math.pow(degreeOfFreedom1 / degreeOfFreedom2, degreeOfFreedom1 / 2) * Math.pow(x, (degreeOfFreedom1 / 2) - 1)) / (gammaIntegral(degreeOfFreedom1 / 2, stepSize, integralUpperBound) * gammaIntegral(degreeOfFreedom2 / 2, stepSize, integralUpperBound) * Math.pow(1 + (degreeOfFreedom1 / degreeOfFreedom2) * x, (degreeOfFreedom1 + degreeOfFreedom2) / 2));
+                for (var i = 0.0; i <= integralUpperBound; i += stepSize) {
+                    var l = eulerGammaFunction(z, i),
+                        h = eulerGammaFunction(z, i + stepSize);
+                    area += ((l + h) / 2) * stepSize;
+                }
+                return area;
             };
-        for (var i = 0.0; i <= (x * 1.0); i += stepSize) {
-            var l = pdf(degreeOfFreedom1, degreeOfFreedom2, i, stepSize, integralUpperBound),
-                h = pdf(degreeOfFreedom1, degreeOfFreedom2, i + stepSize, stepSize, integralUpperBound);
-            area += ((l + h) / 2) * stepSize;
-        }
-        return area;
+        return (gammaIntegral((degreeOfFreedom1 + degreeOfFreedom2) / 2, stepSize, integralUpperBound)* Math.pow(degreeOfFreedom1 / degreeOfFreedom2, degreeOfFreedom1 / 2) * Math.pow(x, (degreeOfFreedom1 / 2) - 1)) / (gammaIntegral(degreeOfFreedom1 / 2, stepSize, integralUpperBound) * gammaIntegral(degreeOfFreedom2 / 2, stepSize, integralUpperBound) * Math.pow(1 + (degreeOfFreedom1 / degreeOfFreedom2) * x, (degreeOfFreedom1 + degreeOfFreedom2) / 2));
+    }
+
+	/*
+	 * Calculate the CDF from x1 to x2.
+	 * Parameter:
+	 * mean: Mean of distribution
+	 * degreeOfFreedom1: Degree of Freedom of first population
+	 * degreeOfFreedom2: Degree of Freedom of second population
+	 * x: Value to which calculate the PDF
+	 * stepSize: Step-size for this calculation (optional, default:0.001)
+     * integralUpperBound: Upper bound for gamma integral because js can not use infinity (optional, default:100)
+	 * Return:
+	 * CDF for x
+	 */
+    static cdf(degreeOfFreedom1, degreeOfFreedom2, x, stepSize=0.1, integralUpperBound=100) {
+        SMathJsUtils.isValidNumber(degreeOfFreedom1);
+        SMathJsUtils.isValidNumber(degreeOfFreedom2);
+        SMathJsUtils.isValidNumber(x);
+        SMathJsUtils.isValidNumber(stepSize);
+        SMathJsUtils.isValidNumber(integralUpperBound);
+		var area = 0.0;
+		for (var i=0.0; i<=x; i+=stepSize) { 
+            var l = this.pdf(degreeOfFreedom1, degreeOfFreedom2, i, stepSize, integralUpperBound),
+                h = this.pdf(degreeOfFreedom1, degreeOfFreedom2, i + stepSize, stepSize, integralUpperBound);
+			area += ((l + h) / 2) * stepSize;
+		}
+		return area;
     }
 
     /*

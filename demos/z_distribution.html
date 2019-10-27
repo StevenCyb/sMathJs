@@ -37,7 +37,6 @@
 
                         diagramDistribution = [],
                         diagramLabels = [],
-                        prev = 0.0,
                         diagramData = [],
 
                         result= 0, 
@@ -55,19 +54,17 @@
                                         
                     for(var i = -2.0; i <= 12.0; i+=0.1) {
                         diagramLabels.push(parseFloat(i.toFixed(1)));
-                        var value = ZDistribution.probabilityBelowEqual(mean, sd, parseFloat(i.toFixed(1)));
-                        value -= prev;
-                        prev += value;    
-                        diagramDistribution.push(value);    
+                        diagramDistribution.push(ZDistribution.pdf(mean, sd, parseFloat(i.toFixed(1))));
                     }
-                   
+                    var bound = ZDistribution.simpleMinMax(mean, sd);
                     switch (probabilityOption) {
                         case "1":
                             k1View.style.visibility = "visible";
                             k2View.style.visibility = "hidden";
                             var highlightData = [], count = 0;
                             for(var i = -2.0; i <= 12.0; i+=0.1) {
-                                if(i.toFixed(1) <= (k1-1)) {
+                                i = parseFloat(i.toFixed(1));
+                                if(i <= k1) {
                                     highlightData[count] = diagramDistribution[count];
                                 }
                                 count++;
@@ -79,14 +76,15 @@
                                 borderWidth: 0,
                                 lineTension: 0
                             });
-                            result = ZDistribution.probabilityBelow(mean, sd, k1); 
+                            result = ZDistribution.cdf(mean, sd, bound[0], k1); 
                             break;
                         case "2":
                             k1View.style.visibility = "visible";
                             k2View.style.visibility = "hidden";
                             var highlightData = [], count = 0;
                             for(var i = -2.0; i <= 12.0; i+=0.1) {
-                                if(i.toFixed(1) <= k1) {
+                                i = parseFloat(i.toFixed(1));
+                                if(i >= k1) {
                                     highlightData[count] = diagramDistribution[count];
                                 }
                                 count++;
@@ -98,14 +96,15 @@
                                 borderWidth: 0,
                                 lineTension: 0
                             });
-                            result = ZDistribution.probabilityBelowEqual(mean, sd, k1);
+                            result = 1 - ZDistribution.cdf(mean, sd, bound[0], k1); 
                             break;
                         case "3":
                             k1View.style.visibility = "visible";
-                            k2View.style.visibility = "hidden";
+                            k2View.style.visibility = "visible";
                             var highlightData = [], count = 0;
                             for(var i = -2.0; i <= 12.0; i+=0.1) {
-                                if(i.toFixed(1) >= (k1+1)) {
+                                i = parseFloat(i.toFixed(1));
+                                if(i >= k1 && i <= k2) {
                                     highlightData[count] = diagramDistribution[count];
                                 }
                                 count++;
@@ -117,33 +116,15 @@
                                 borderWidth: 0,
                                 lineTension: 0
                             });
-                            result = ZDistribution.probabilityAbove(mean, sd, k1);
-							break;
+                            result = ZDistribution.cdf(mean, sd, k1, k2);
+                            break;
                         case "4":
                             k1View.style.visibility = "visible";
-                            k2View.style.visibility = "hidden";
-                            var highlightData = [], count = 0;
-                            for(var i = -2.0; i <= 12.0; i+=0.1) {
-                                if(i.toFixed(1) >= k1) {
-                                    highlightData[count] = diagramDistribution[count];
-                                }
-                                count++;
-                            }
-                            diagramData.push({
-                                data: highlightData,
-                                backgroundColor: "rgba(250, 146, 0, 1)",
-                                borderColor: "rgba(250, 146, 0, 1)",
-                                borderWidth: 0,
-                                lineTension: 0
-                            });
-                            result = ZDistribution.probabilityAboveEqual(mean, sd, k1);
-                            break;
-                        case "5":
-                            k1View.style.visibility = "visible";
                             k2View.style.visibility = "visible";
                             var highlightData = [], count = 0;
                             for(var i = -2.0; i <= 12.0; i+=0.1) {
-                                if(i.toFixed(1) >= k1 && i.toFixed(1) <= k2) {
+                                i = parseFloat(i.toFixed(1));
+                                if(i <= k1 || i >= k2) {
                                     highlightData[count] = diagramDistribution[count];
                                 }
                                 count++;
@@ -155,26 +136,7 @@
                                 borderWidth: 0,
                                 lineTension: 0
                             });
-                            result = ZDistribution.probabilityInner(mean, sd, k1, k2);
-                            break;
-                        case "6":
-                            k1View.style.visibility = "visible";
-                            k2View.style.visibility = "visible";
-                            var highlightData = [], count = 0;
-                            for(var i = -2.0; i <= 12.0; i+=0.1) {
-                                if(i.toFixed(1) <= k1 || i.toFixed(1) >= k2) {
-                                    highlightData[count] = diagramDistribution[count];
-                                }
-                                count++;
-                            }
-                            diagramData.push({
-                                data: highlightData,
-                                backgroundColor: "rgba(250, 146, 0, 1)",
-                                borderColor: "rgba(250, 146, 0, 1)",
-                                borderWidth: 0,
-                                lineTension: 0
-                            });
-                            result = ZDistribution.probabilityOuter(mean, sd, k1, k2);
+                            result = 1 - ZDistribution.cdf(mean, sd, k1, k2);
                             break;
                     }
                     diagramData.push({
@@ -234,12 +196,10 @@
             <tr>
                 <td>Dataset (Marks)</td>
                 <td colspan="2"><select id ="probability-option" onchange="update()">
-                        <option value="1">P(X &lt; x)</option>
-                        <option value="2">P(X &lt;= x)</option>
-                        <option value="3">P(X > x)</option>
-                        <option value="4">P(X >= x)</option>
-                        <option value="5">P(k1 &lt;= X => k2)</option>
-                        <option value="6">P(k1 >= X =&lt; k2)</option>
+                        <option value="1">P(X &lt;= x)</option>
+                        <option value="2">P(X >= x)</option>
+                        <option value="3">P(k1 &lt;= X => k2)</option>
+                        <option value="4">P(k1 >= X =&lt; k2)</option>
                     </select>
                 </td>
             </tr>

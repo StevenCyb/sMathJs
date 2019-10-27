@@ -38,7 +38,6 @@
                         mean1 = 0, mean2 = 0, mean1Index = 0, mean2Index = 0,
                         fRatio = 0, fRatioIndex = 0,
                         mode = 0, modeIndex = 0,
-
                         diagramLabels = [],
                         diagramDistribution = [],
                         highlightData1 = [], highlightData2 = [],
@@ -66,18 +65,16 @@
                     for(var i = 0.0; i <= 7.0; i+=0.1) {
                         diagramLabels.push(parseFloat(i.toFixed(1)));
                         var value = FDistribution.pdf(degreeOfFreedom1, degreeOfFreedom2, i);
-                        if(value <= (confidence / 100)) {
-                            highlightData1[counter] = value - prev;
+                        diagramDistribution.push(value);
+                        if(FDistribution.cdf(degreeOfFreedom1, degreeOfFreedom2, i) <= (confidence / 100)) {
+                            highlightData1[counter] = value;
                         } else {
                             if(mergeHighlight) {
                                 mergeHighlight = false;
-                                highlightData1[counter] = value - prev;
+                                highlightData1[counter] = value;
                             }
-                            highlightData2[counter] = value - prev;
+                            highlightData2[counter] = value;
                         }
-                        value -= prev;
-                        prev += value;
-                        diagramDistribution.push(value);
                         if(i.toFixed(1) == mean1) {
                             mean1Index = counter;
                         }
@@ -254,6 +251,6 @@
                 <td style="color: rgba(255, 105, 97, 0.6);">&#9640;</td>
             </tr>
         </table> 
-        <canvas id="canvas"></canvas>      
+        <canvas id="canvas"></canvas>
     </body>
 </html>

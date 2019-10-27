@@ -4,197 +4,54 @@ class ZDistribution {
 	 * Parameter:
 	 * mean: Mean of distribution
 	 * sd: Standard deviation of distribution
-	 * x1: From position x1
-	 * x2: To position x2
-	 * stepSize: Step-size for this calculation (optional, default: 0.1)
+	 * x: Value for which the PDF is calculated
 	 * Return:
 	 * Probability for x1 to x2
 	 */
-    static pdf(mean, sd, x1, x2, stepSize=0.1) {
+    static pdf(mean, sd, x) {
         SMathJsUtils.isValidNumber(mean);
         SMathJsUtils.isValidNumber(sd);
-        SMathJsUtils.isValidNumber(x1);
-        SMathJsUtils.isValidNumber(x2);
-		SMathJsUtils.isValidNumber(stepSize);
-		var area = 0.0,
-			pdf = function(mean, sd, x) {
-				SMathJsUtils.isValidNumber(x);
-				SMathJsUtils.isValidNumber(mean);
-				SMathJsUtils.isValidNumber(sd);
-				return Math.pow(Math.E, -0.5 * Math.pow((x - mean) / sd, 2));
-			};
-        for (var i = (x1 * 1.0); i <= (x2 * 1.0); i += stepSize) {
-            var l = pdf(mean, sd, i),
-                h = pdf(mean, sd, i + stepSize);
-            area += ((l + h) / 2) * stepSize;
-        }
-        return (1 / (sd * Math.sqrt(2 * Math.PI))) * area;
+        SMathJsUtils.isValidNumber(x);
+        return (1 / (sd * Math.sqrt(2 * Math.PI))) * Math.pow(Math.E, -0.5 * Math.pow((x - mean) / sd, 2));
     }
 
 	/*
 	 * Calculate the normal PDF.
 	 * Parameter:
-	 * x1: From position x1
-	 * x2: To position x2
+	 * x: Value for which the PDF is calculated
 	 * stepSize: Step-size for this calculation (optional, default: 0.1)
 	 * Return:
 	 * PDF for x
 	 */
-    static normalPdf(x1, x2, stepSize=0.1) {
-        SMathJsUtils.isValidNumber(x1);
-        SMathJsUtils.isValidNumber(x2);
-		SMathJsUtils.isValidNumber(stepSize);
-		var area = 0.0,
-			pdf = function(x) {
-				return (1 / (Math.sqrt(2 * Math.PI))) * Math.pow(Math.E, -0.5 * Math.pow((x), 2));
-			};
-		for (var i = (x1 * 1.0); i <= (x2 * 1.0); i += stepSize) {
-			var l = pdf(i),
-				h = pdf(i + stepSize);
-			area += ((l + h) / 2) * stepSize;
-		}
-		return area;
-    }
-
-	/*
-	 * Probability below x `P(X < x)`.
-	 * Parameter:
-	 * mean: Mean of distribution
-	 * sd: Standard deviation of distribution
-	 * x: For with to calculate probability 
-	 * stepSize: Step-size for this calculation (optional, default:0.1)
-	 * Return:
-	 * Probability below x
-	 */
-    static probabilityBelow(mean, sd, x, stepSize=0.1) {
+    static normalPdf(x) {
         SMathJsUtils.isValidNumber(x);
-        SMathJsUtils.isValidNumber(mean);
-        SMathJsUtils.isValidNumber(sd);
-        SMathJsUtils.isValidNumber(stepSize);
-        return this.pdf(mean, sd, this.simpleMinMax(mean, sd)[0], x - 1, stepSize);
+		return (1 / (Math.sqrt(2 * Math.PI))) * Math.pow(Math.E, -0.5 * Math.pow((x), 2));
     }
 
 	/*
-	 * Probability below x (included) `P(X <= x)`.
+	 * Calculate the CDF from x1 to x2.
 	 * Parameter:
 	 * mean: Mean of distribution
 	 * sd: Standard deviation of distribution
-	 * x: For with to calculate probability 
-	 * stepSize: Step-size for this calculation (optional, default:0.1)
-	 * Return:
-	 * Probability below x (included)
-	 */
-    static probabilityBelowEqual(mean, sd, x, stepSize=0.1) {
-        SMathJsUtils.isValidNumber(x);
-        SMathJsUtils.isValidNumber(mean);
-        SMathJsUtils.isValidNumber(sd);
-        SMathJsUtils.isValidNumber(stepSize);
-        return this.probabilityBelow(mean, sd, x + 1, stepSize);
-    }
-
-	/*
-	 * Probability for above x `P(X > x)`.
-	 * Parameter:
-	 * mean: Mean of distribution
-	 * sd: Standard deviation of distribution
-	 * x: For with to calculate probability 
-	 * stepSize: Step-size for this calculation (optional, default:0.1)
-	 * Return:
-	 * Probability for above x
-	 */
-    static probabilityAbove(mean, sd, x, stepSize=0.1) {
-        SMathJsUtils.isValidNumber(x);
-        SMathJsUtils.isValidNumber(mean);
-        SMathJsUtils.isValidNumber(sd);
-        SMathJsUtils.isValidNumber(stepSize);
-        return this.pdf(mean, sd, x - 1, this.simpleMinMax(mean, sd)[1], stepSize);
-    }
-
-	/*
-	 * Probability for above x(included) `P(X >= x)`.
-	 * Parameter:
-	 * mean: Mean of distribution
-	 * sd: Standard deviation of distribution
-	 * x: For with to calculate probability 
-	 * stepSize: Step-size for this calculation (optional, default:0.1)
-	 * Return:
-	 * Probability for above x(included)
-	 */
-    static probabilityAboveEqual(mean, sd, x, stepSize=0.1) {
-        SMathJsUtils.isValidNumber(x);
-        SMathJsUtils.isValidNumber(mean);
-        SMathJsUtils.isValidNumber(sd);
-        SMathJsUtils.isValidNumber(stepSize);
-        return this.probabilityAbove(mean, sd, x + 1, stepSize);
-    }
-
-	/*
-	 * Probability between k1(included) and k2(included) `P(k1 <= X => k2)`.
-	 * Parameter:
-	 * mean: Mean of distribution
-	 * sd: Standard deviation of distribution
-	 * x1: Calculate probability from
-	 * x2: Calculate probability to
-	 * stepSize: Step-size for this calculation (optional, default:0.1)
-	 * Return:
-	 * Probability between k1(included) and k2(included) 
-	 */
-    static probabilityInner(mean, sd, x1, x2, stepSize=0.1) {
-        SMathJsUtils.isValidNumber(x1);
-        SMathJsUtils.isValidNumber(x2);
-        SMathJsUtils.isValidNumber(mean);
-        SMathJsUtils.isValidNumber(sd);
-        SMathJsUtils.isValidNumber(stepSize);
-        return this.pdf(mean, sd, x1, x2, stepSize);
-    }
-
-	/*
-	 * Probability excluding all between k1 and k2 `P(k1 > X < k2)`.
-	 * Parameter:
-	 * mean: Mean of distribution
-	 * sd: Standard deviation of distribution
-	 * x1: Calculate probability excluding from
-	 * x2: Calculate probability excluding to
-	 * stepSize: Step-size for this calculation (optional, default:0.1)
-	 * Return:
-	 * Probability excluding all between k1(included) and k2(included) 
-	 */
-    static probabilityOuter(mean, sd, x1, x2, stepSize=0.1) {
-        SMathJsUtils.isValidNumber(x1);
-        SMathJsUtils.isValidNumber(x2);
-        SMathJsUtils.isValidNumber(mean);
-        SMathJsUtils.isValidNumber(sd);
-        SMathJsUtils.isValidNumber(stepSize);
-        return 1 - this.pdf(mean, sd, x1, x2, stepSize);
-    }
-
-	/*
-	 * Calculate the normal CDF from x1 to x2.
-	 * Parameter:
-	 * mean: Mean of distribution
-	 * sd: Standard deviation of distribution
-	 * x1: From position x1
-	 * x2: To position x2
-	 * stepSize: Step-size for this calculation (optional, default:0.0001)
+	 * x1: Value from which calculate the PDF
+	 * x2: Value to which calculate the PDF
+	 * stepSize: Step-size for this calculation (optional, default:0.001)
 	 * Return:
 	 * CDF for x
 	 */
-    static cdf(mean, sd, x1, x2, stepSize=0.0001) {
+    static cdf(mean, sd, x1, x2, stepSize=0.001) {
 		SMathJsUtils.isValidNumber(mean);
 		SMathJsUtils.isValidNumber(sd);
         SMathJsUtils.isValidNumber(x1);
         SMathJsUtils.isValidNumber(x2);
         SMathJsUtils.isValidNumber(stepSize);
-        var erf = function(x1, x2) {
-				var area = 0.0;
-				for (var i = (x1 * 1.0); i <= (x2 * 1.0); i += stepSize) {
-					var l = Math.pow(Math.E, Math.pow(-1 * i, 2) / 2),
-						h = Math.pow(Math.E, Math.pow(-1 * (i + stepSize), 2) / 2);
-					area += ((l + h) / 2) * stepSize;
-				}
-				return (1 / Math.sqrt(2 * Math.PI)) * area;
-			};
-        return 0.5 * (1 + erf(x1, (x - mean) / Math.sqrt(2)));
+		var area = 0.0;
+		for (var i=parseFloat(x1); i<=parseFloat(x2); i+=stepSize) { 
+			var l = this.pdf(mean, sd, i),
+				h = this.pdf(mean, sd, i + stepSize);
+			area += ((l + h) / 2) * stepSize;
+		}
+		return area;
     }
 
 	/*

@@ -35,7 +35,6 @@
                         diagramDistribution = [],
                         diagramLabels = [],
                         highlightData = [],
-                        prev = 0.0,
                         diagramData = [],
                         maxTicksLimit = 0,
                         
@@ -58,32 +57,28 @@
                             var counter = 0;
                             for(var i = -7.0; i <= 7.0; i+=0.1) {
                                 diagramLabels.push(parseFloat(i.toFixed(1)));
-                                var value = TDistribution.centralPdfBetween(degreeOfFreedom, -7, parseFloat(i.toFixed(1)));
-                                value -= prev;
-                                prev += value;    
+                                var value = TDistribution.centralPDF(degreeOfFreedom, parseFloat(i.toFixed(1)));
                                 diagramDistribution.push(value);
                                 if(i.toFixed(1) >= k1 && i.toFixed(1) <= k2) {
                                     highlightData[counter] = value;
-                                    result += value;
                                 }
                                 counter++;
                             }
+                            result = TDistribution.centralCDF(degreeOfFreedom, k1, k2);
                             maxTicksLimit = 15;
                             break;
                         case "noncentral":
                             var counter = 0;
                             for(var i = -1.0; i <= 7.0; i+=0.1) {
                                 diagramLabels.push(parseFloat(i.toFixed(1)));
-                                var value = TDistribution.noncentralPdfBetween(mean, degreeOfFreedom, -6, parseFloat(i.toFixed(1)));
-                                value -= prev;
-                                prev += value;    
-                                diagramDistribution.push(value);  
+                                var value = TDistribution.noncentralPDF(mean, degreeOfFreedom, parseFloat(i.toFixed(1)));
+                                diagramDistribution.push(value);
                                 if(i.toFixed(1) >= k1 && i.toFixed(1) <= k2) {
                                     highlightData[counter] = value;
-                                    result += value;
                                 }
-                                counter++;  
+                                counter++;
                             }
+                            result = TDistribution.noncentralCDF(mean, degreeOfFreedom, k1, k2);
                             maxTicksLimit = 9;
                             break;
                     }

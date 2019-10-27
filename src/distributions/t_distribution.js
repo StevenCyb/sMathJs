@@ -30,30 +30,41 @@ class TDistribution {
 	 * Calculate the central probability for x.
 	 * Parameter:
 	 * degreeOfFreedom: Degrees of freedom of this distribution
-	 * x1: From position x1
-	 * x2: To position x2
+	 * x: Value to which calculate the PDF
      * stepSize: Step-size for this calculation (optional, default:0.1)
      * integralUpperBound: Upper bound for gamma integral because js can not use infinity (optional, default:100)
 	 * Return:
-	 * Probability for x1 to x2
+	 * PDF for x
 	 */
-    static centralPdfBetween(degreeOfFreedom, x1, x2, stepSize=0.1, integralUpperBound=100) {
+    static centralPDF = function(degreeOfFreedom, x, stepSize=0.1, integralUpperBound=100) {
+        SMathJsUtils.isValidNumber(degreeOfFreedom);
+        SMathJsUtils.isValidNumber(x);
+        SMathJsUtils.isValidNumber(stepSize);
+        SMathJsUtils.isValidNumber(integralUpperBound);
+        return (TDistribution.gammaIntegral((degreeOfFreedom + 1) / 2, stepSize, integralUpperBound) / (Math.sqrt(degreeOfFreedom * Math.PI) * TDistribution.gammaIntegral(degreeOfFreedom / 2, stepSize, integralUpperBound))) * Math.pow(1 + (Math.pow(x, 2) / degreeOfFreedom), -1 * ((degreeOfFreedom + 1) / 2))
+    }
+
+	/*
+	 * Calculate the cental CDF to x.
+	 * Parameter:
+	 * degreeOfFreedom: Degrees of freedom of this distribution
+	 * x1: Value from which calculate the CDF
+	 * x2: Value to which calculate the CDF
+     * stepSize: Step-size for this calculation (optional, default:0.1)
+     * integralUpperBound: Upper bound for gamma integral because js can not use infinity (optional, default:100)
+	 * Return:
+	 * CDF from x1 to x2
+	 */
+    static centralCDF(degreeOfFreedom, x1, x2, stepSize=0.1, integralUpperBound=100) {
         SMathJsUtils.isValidNumber(degreeOfFreedom);
         SMathJsUtils.isValidNumber(x1);
         SMathJsUtils.isValidNumber(x2);
         SMathJsUtils.isValidNumber(stepSize);
         SMathJsUtils.isValidNumber(integralUpperBound);
-        var area = 0.0,
-            centralPDF = function(degreeOfFreedom, x, stepSize=0.1, integralUpperBound=100) {
-                SMathJsUtils.isValidNumber(degreeOfFreedom);
-                SMathJsUtils.isValidNumber(x);
-                SMathJsUtils.isValidNumber(stepSize);
-                SMathJsUtils.isValidNumber(integralUpperBound);
-                return (TDistribution.gammaIntegral((degreeOfFreedom + 1) / 2, stepSize, integralUpperBound) / (Math.sqrt(degreeOfFreedom * Math.PI) * TDistribution.gammaIntegral(degreeOfFreedom / 2, stepSize, integralUpperBound))) * Math.pow(1 + (Math.pow(x, 2) / degreeOfFreedom), -1 * ((degreeOfFreedom + 1) / 2))
-            };
+        var area = 0.0;
         for (var i = (x1 * 1.0); i <= (x2 * 1.0); i += stepSize) {
-            var l = centralPDF(degreeOfFreedom, i, stepSize, integralUpperBound),
-                h = centralPDF(degreeOfFreedom, i + stepSize, stepSize, integralUpperBound);
+            var l = this.centralPDF(degreeOfFreedom, i, stepSize, integralUpperBound),
+                h = this.centralPDF(degreeOfFreedom, i + stepSize, stepSize, integralUpperBound);
             area += ((l + h) / 2) * stepSize;
         }
         return area;
@@ -71,31 +82,43 @@ class TDistribution {
 	 * Return:
 	 * Probability for x1 to x2
 	 */
-    static noncentralPdfBetween(mean, degreeOfFreedom, x1, x2, stepSize=0.1, integralUpperBound=100) {
+    static noncentralPDF = function(mean, degreeOfFreedom, x, stepSize=0.1, integralUpperBound=100) {
+        SMathJsUtils.isValidNumber(mean);
+        SMathJsUtils.isValidNumber(degreeOfFreedom);
+        SMathJsUtils.isValidNumber(x);
+        SMathJsUtils.isValidNumber(stepSize);
+        SMathJsUtils.isValidNumber(integralUpperBound);
+        var tmp = 0;
+        for (var i = 0; i <= integralUpperBound; i += stepSize) {
+            var l = Math.pow(i, degreeOfFreedom) * Math.exp(-0.5 * Math.pow(i - ((mean * x) / Math.sqrt(Math.pow(x, 2) + degreeOfFreedom)), 2)),
+                h = Math.pow(i + stepSize, degreeOfFreedom) * Math.exp(-0.5 * Math.pow((i + stepSize) - ((mean * x) / Math.sqrt(Math.pow(x, 2) + degreeOfFreedom)), 2));
+            tmp += ((l + h) / 2) * stepSize;
+        }
+        return ((Math.pow(degreeOfFreedom, degreeOfFreedom / 2) * Math.exp(-1 * ((degreeOfFreedom * Math.pow(mean, 2)) / (2 * (Math.pow(x,2) + degreeOfFreedom))))) / (Math.sqrt(Math.PI) * TDistribution.gammaIntegral(degreeOfFreedom / 2, stepSize, integralUpperBound) * Math.pow(2, (degreeOfFreedom - 1) / 2) * Math.pow(Math.pow(x, 2) + degreeOfFreedom, (degreeOfFreedom + 1) / 2))) * tmp;
+    }
+
+	/*
+	 * Calculate the noncental CDF to x.
+	 * Parameter:
+	 * degreeOfFreedom: Degrees of freedom of this distribution
+	 * x1: Value from which calculate the CDF
+	 * x2: Value to which calculate the CDF
+     * stepSize: Step-size for this calculation (optional, default:0.1)
+     * integralUpperBound: Upper bound for gamma integral because js can not use infinity (optional, default:100)
+	 * Return:
+	 * CDF from x1 to x2
+	 */
+    static noncentralCDF(mean, degreeOfFreedom, x1, x2, stepSize=0.1, integralUpperBound=100) {
         SMathJsUtils.isValidNumber(mean);
         SMathJsUtils.isValidNumber(degreeOfFreedom);
         SMathJsUtils.isValidNumber(x1);
         SMathJsUtils.isValidNumber(x2);
         SMathJsUtils.isValidNumber(stepSize);
         SMathJsUtils.isValidNumber(integralUpperBound);
-        var area = 0.0,
-            nocentralPDF = function(mean, degreeOfFreedom, x, stepSize=0.1, integralUpperBound=100) {
-                SMathJsUtils.isValidNumber(mean);
-                SMathJsUtils.isValidNumber(degreeOfFreedom);
-                SMathJsUtils.isValidNumber(x);
-                SMathJsUtils.isValidNumber(stepSize);
-                SMathJsUtils.isValidNumber(integralUpperBound);
-                var tmp = 0;
-                for (var i = 0; i <= integralUpperBound; i += stepSize) {
-                    var l = Math.pow(i, degreeOfFreedom) * Math.exp(-0.5 * Math.pow(i - ((mean * x) / Math.sqrt(Math.pow(x, 2) + degreeOfFreedom)), 2)),
-                        h = Math.pow(i + stepSize, degreeOfFreedom) * Math.exp(-0.5 * Math.pow((i + stepSize) - ((mean * x) / Math.sqrt(Math.pow(x, 2) + degreeOfFreedom)), 2));
-                    tmp += ((l + h) / 2) * stepSize;
-                }
-                return ((Math.pow(degreeOfFreedom, degreeOfFreedom / 2) * Math.exp(-1 * ((degreeOfFreedom * Math.pow(mean, 2)) / (2 * (Math.pow(x,2) + degreeOfFreedom))))) / (Math.sqrt(Math.PI) * TDistribution.gammaIntegral(degreeOfFreedom / 2, stepSize, integralUpperBound) * Math.pow(2, (degreeOfFreedom - 1) / 2) * Math.pow(Math.pow(x, 2) + degreeOfFreedom, (degreeOfFreedom + 1) / 2))) * tmp;
-            };
+        var area = 0.0;
         for (var i = (x1 * 1.0); i <= (x2 * 1.0); i += stepSize) {
-            var l = nocentralPDF(mean, degreeOfFreedom, i, stepSize, integralUpperBound),
-                h = nocentralPDF(mean, degreeOfFreedom, i + stepSize, stepSize, integralUpperBound);
+            var l = this.noncentralPDF(mean, degreeOfFreedom, i, stepSize, integralUpperBound),
+                h = this.noncentralPDF(mean, degreeOfFreedom, i + stepSize, stepSize, integralUpperBound);
             area += ((l + h) / 2) * stepSize;
         }
         return area;

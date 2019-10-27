@@ -6,7 +6,7 @@ The project isn't finished yet. Currently the following tasks are planned:
     - <del>Z-Distribution / Gaussian Distribution</del>
     - <del>Central + noncentral T-Student Distribution</del>
     - <del>F-Distribution</del>
-    - Gamma Distribution <!-- in student t -->
+    - <del>Gamma Distribution</del>
     - Beta Distribution <!-- in student t -->
     - Exponential Distribution
     - Continuous Equal Distribution / Rectangular Distribution
@@ -36,6 +36,7 @@ The project isn't finished yet. Currently the following tasks are planned:
     - [Z-Distribution](#z)
     - [T-Distribution](#t)
     - [F-Distribution](#f)
+    - [Gamma-Distribution](#g)
 <a name="how_to_use_it"></a>
 ## How To Use It
 Bind the JS scripts as follows. For detailed information for the corresponding distribution, check out the following sections.
@@ -46,6 +47,7 @@ For distribution include `utils` and the required `distributions`.
 <script src="src/distributions/f_distribution.js"></script>
 <script src="src/distributions/t_distribution.js"></script>
 <script src="src/distributions/z_distribution.js"></script>
+<script src="src/distributions/gamma_distribution.js"></script>
 ```
 For data fitting `utils`, `optimizer` and `regression`.
 ```
@@ -93,3 +95,9 @@ A library to create and use a F-Distribution.
 The implementation contains only the basic functions.
 A description of the functionalities can be found [here](/doc/f_distribution.md).
 ![F-Distribution](/doc/media/f_distribution.gif)
+<a name="g"></a>
+### Gamma-Distribution
+A library to create and use a Gamma-Distribution.
+The implementation contains only the basic functions.
+A description of the functionalities can be found [here](/doc/gamma_distribution.md).
+![Gamma-Distribution](/doc/media/gamma_distribution.gif)

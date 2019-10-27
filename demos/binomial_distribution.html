@@ -60,52 +60,36 @@
                     case "3":
                         k1View.style.visibility = "visible";
                         k2View.style.visibility = "hidden";
-                        for(var i = 0; i < k1; i++) {
-                            diagramBarColor[i] = "rgba(250, 146, 0, 1)";
-                        }
-                        resultView.innerHTML = BinomialDistribution.cumulativeProbabilityBelow(percentage, sampleSize, 0, k1).toFixed(3);
-                        break;
-                    case "4":
-                        k1View.style.visibility = "visible";
-                        k2View.style.visibility = "hidden";
                         for(var i = 0; i <= k1; i++) {
                             diagramBarColor[i] = "rgba(250, 146, 0, 1)";
                         }
-                        resultView.innerHTML = BinomialDistribution.cumulativeProbabilityBelowEqual(percentage, sampleSize, 0, k1).toFixed(3);
+                        resultView.innerHTML = BinomialDistribution.cdf(percentage, sampleSize, -20, k1).toFixed(3);
                         break;
-                    case "5":
-                        k1View.style.visibility = "visible";
-                        k2View.style.visibility = "hidden";
-                        for(var i = (k1+1); i <= sampleSize; i++) {
-                            diagramBarColor[i] = "rgba(250, 146, 0, 1)";
-                        }
-                        resultView.innerHTML = BinomialDistribution.cumulativeProbabilityAbove(percentage, sampleSize, 0, k1).toFixed(3);
-                        break;
-                    case "6":
+                    case "4":
                         k1View.style.visibility = "visible";
                         k2View.style.visibility = "hidden";
                         for(var i = k1; i <= sampleSize; i++) {
                             diagramBarColor[i] = "rgba(250, 146, 0, 1)";
                         }
-                        resultView.innerHTML = BinomialDistribution.cumulativeProbabilityAboveEqual(percentage, sampleSize, 0, k1).toFixed(3);
+                        resultView.innerHTML = 1 - BinomialDistribution.cdf(percentage, sampleSize, -20, k1).toFixed(3);
                         break;
-                    case "7":
+                    case "5":
                         k1View.style.visibility = "visible";
                         k2View.style.visibility = "visible";
                         for(var i = k1; i <= k2; i++) {
                             diagramBarColor[i] = "rgba(250, 146, 0, 1)";
                         }
-                        resultView.innerHTML = BinomialDistribution.cumulativeProbabilityInner(percentage, sampleSize, k1, k2).toFixed(3);
+                        resultView.innerHTML = BinomialDistribution.cdf(percentage, sampleSize, k1, k2).toFixed(3);
                         break;
-                    case "8":
+                    case "6":
                         k1View.style.visibility = "visible";
                         k2View.style.visibility = "visible";
                         for(var i = 0; i <= sampleSize; i++) {
-                            if(i < k1 || i > k2) {
+                            if(i <= k1 || i >= k2) {
                                 diagramBarColor[i] = "rgba(250, 146, 0, 1)";
                             }
                         }
-                        resultView.innerHTML = BinomialDistribution.cumulativeProbabilityOuter(percentage, sampleSize, k1, k2).toFixed(3);
+                        resultView.innerHTML = 1 - BinomialDistribution.cdf(percentage, sampleSize, k1, k2).toFixed(3);
                         break;
                 }
 
@@ -151,12 +135,10 @@
                     <select id ="probability-option" onchange="update()">
                         <option value="1">E</option>
                         <option value="2">P(X = x)</option>
-                        <option value="3">P(X &lt; x)</option>
-                        <option value="4">P(X &lt;= x)</option>
-                        <option value="5">P(X > x)</option>
-                        <option value="6">P(X >= x)</option>
-                        <option value="7">P(k1 &lt;= X => k2)</option>
-                        <option value="8">P(k1 > X &lt; k2)</option>
+                        <option value="3">P(X &lt;= x)</option>
+                        <option value="4">P(X >= x)</option>
+                        <option value="5">P(k1 &lt;= X => k2)</option>
+                        <option value="6">P(k1 >= X =&lt; k2)</option>
                     </select>
                 </td>
                 <td>Result</td>
