@@ -7,13 +7,13 @@ The project isn't finished yet. Currently the following tasks are planned:
     - <del>Central + noncentral T-Student Distribution</del>
     - <del>F-Distribution</del>
     - <del>Gamma Distribution</del>
+    - <del>Exponential Distribution</del>
+    - Poisson Distribution
     - Beta Distribution <!-- in student t -->
-    - Exponential Distribution
+    - Lognormal Distribution
     - Continuous Equal Distribution / Rectangular Distribution
     - Weibull Distribution
     - Laplace Distribution
-    - Lognormal Distribution
-    - Poisson Distribution
     - Hypergeometric Distribution
  - Lib & Demo for Regressions
     - <del>Polynomial-Regression</del>
@@ -37,6 +37,7 @@ The project isn't finished yet. Currently the following tasks are planned:
     - [T-Distribution](#t)
     - [F-Distribution](#f)
     - [Gamma-Distribution](#g)
+    - [Exponential-Distribution](#exp)
 <a name="how_to_use_it"></a>
 ## How To Use It
 Bind the JS scripts as follows. For detailed information for the corresponding distribution, check out the following sections.
@@ -48,6 +49,7 @@ For distribution include `utils` and the required `distributions`.
 <script src="src/distributions/t_distribution.js"></script>
 <script src="src/distributions/z_distribution.js"></script>
 <script src="src/distributions/gamma_distribution.js"></script>
+<script src="src/distributions/exponential_distribution.js"></script>
 ```
 For data fitting `utils`, `optimizer` and `regression`.
 ```
@@ -73,8 +75,8 @@ This part of the library provides probability distributions for statistical eval
 <a name="binomial"></a>
 ### Binomial Distribution
 A library to create and use a Binomial Distribution.
-The corresponding demo for this distribution looks like this.
 A description of the functionalities can be found [here](/doc/binomial_distribution.md).
+The corresponding demo for this distribution looks like this.
 ![Binomial-Distribution](/doc/media/binomial_distribution.gif)
 <a name="z"></a>
 ### Z-Distribution / Gaussian distribution
@@ -85,19 +87,25 @@ A description of the functionalities can be found [here](/doc/z_distribution.md)
 <a name="t"></a>
 ### Centred + Noncentred T-Distribution
 A library to create and use a centred and noncentred T-Distribution.
-The implementation is rather slow due several integrals, so this distribution can't be recommended.
-The corresponding demo for this distribution looks like this.
 A description of the functionalities can be found [here](/doc/t_distribution.md).
+The corresponding demo for this distribution looks like this.
 ![Binomial-Distribution](/doc/media/t_distribution.gif)
 <a name="f"></a>
 ### F-Distribution
 A library to create and use a F-Distribution.
-The implementation contains only the basic functions.
 A description of the functionalities can be found [here](/doc/f_distribution.md).
+The corresponding demo for this distribution looks like this.
 ![F-Distribution](/doc/media/f_distribution.gif)
 <a name="g"></a>
 ### Gamma-Distribution
 A library to create and use a Gamma-Distribution.
-The implementation contains only the basic functions.
 A description of the functionalities can be found [here](/doc/gamma_distribution.md).
+The corresponding demo for this distribution looks like this.
 ![Gamma-Distribution](/doc/media/gamma_distribution.gif)
+<a name="exp"></a>
+### Exponential-Distribution
+A library to create and use a Exponential-Distribution.
+A description of the functionalities can be found [here](/doc/exponential_distribution.md).
+The corresponding demo for this distribution looks like this.
+![Exponential-Distribution](/doc/media/exponential_distribution.gif)
+

@@ -1,12 +1,12 @@
 <html>
 	<head>
-        <title>Demo - Gamma-Distribution</title>
+        <title>Demo - Exponential-Distribution</title>
         <meta charset="utf-8"/>
         <script src="chartjs/Chart.min.js"></script>
         <link rel="stylesheet" type="text/css" href="chartjs/Chart.min.css">
 
         <script src="../src/utils.js"></script>
-        <script src="../src/distributions/gamma_distribution.js"></script>
+        <script src="../src/distributions/exponential_distribution.js"></script>
 
         <style>
             table {margin: 0 auto; background-color: #cccccc; padding: 5px 10px; max-width: 800px;}
@@ -19,45 +19,39 @@
             #additional-options input, #additional-options select {width: 150px;}
             #learning-rate-label, #momentum-label, #gamma-label, #beta-1-label, #beta-2-label {display:none;}
             canvas {-moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; margin: 0 auto; margin-top: 10px; max-width: 800px; max-height: 500px; }
-            .text-input {background-color: transparent; border: none; border-bottom: solid 1px black;}
-            .text-input[type="number"] {width: 35px;}
             #option-probability {width: 90px;}
         </style>
         <script>
             var chart = null;
-            function update() {
-                var variance = parseFloat(document.getElementById("option-variance").value),
-                    mean = parseFloat(document.getElementById("option-mean").value),
-                    x = parseFloat(document.getElementById("option-x").value),
-                    probability = document.getElementById("option-probability").value;
-                if(variance == NaN || variance <= 0.0 || mean == NaN || mean <= 0.0 || x == NaN || x <= NaN) {
-                    return;
-                }
+            function update(syncValue) {
                 var diagramLabels = [],
                     diagramDistribution = [],
                     diagramData = [],
                     highlightData = [],
-                    theta = GammaDistribution.stretching(variance, mean),
-                    k = GammaDistribution.shape(mean, theta),
-                    p = GammaDistribution.cdf(12.0, k, theta, 0.001, 50);
-                document.getElementById("answere-k").innerHTML = "k = " + k.toFixed(4);
-                document.getElementById("answere-theta").innerHTML = "&theta; = " + theta.toFixed(4);
-                if(probability == "inadequate") {
-                    document.getElementById("answere-p").innerHTML = "P(X >= " + x + ") = " + (1 - p).toFixed(4);
+                    lambda = parseFloat(document.getElementById("option-lambda").value),
+                    x = parseFloat(document.getElementById("option-x").value),
+                    probabilityOption = document.getElementById("option-probability").value;
+
+                if(probabilityOption == "P(X >= x)") {
+                    document.getElementById("result").innerHTML = (1 - ExponentialDistribution.cdf(lambda, x)).toFixed(3);
                 } else {
-                    document.getElementById("answere-p").innerHTML = "P(X <= " + x + ") = " + p.toFixed(4);
+                    document.getElementById("result").innerHTML = ExponentialDistribution.cdf(lambda, x).toFixed(3);
                 }
+                
                 for(var i=0.0; i<=20.00; i+=0.01) {
                     i = parseFloat(i.toFixed(2));
                     diagramLabels.push(i);
-                    var currentProbability = GammaDistribution.pdf(i, k, theta);
-                    diagramDistribution.push(currentProbability);
-                    if((probability == "inadequate" && i >= x) || (probability == "adequate" && i <= x)) {
-                        highlightData.push(currentProbability);
+                    var value = ExponentialDistribution.pdf(lambda, i);
+                    diagramDistribution.push(value);
+                    if(probabilityOption == "P(X >= x)" && i >= x) { 
+                        highlightData.push(value);
+                    } else if(probabilityOption == "P(X <= x)" && i <= x) {
+                        highlightData.push(value);
                     } else {
                         highlightData.push(0.0);
                     }
                 }
+
                 diagramData.push({
                     data: diagramDistribution,
                     borderColor: "rgba(51, 51, 51, 1)",
@@ -71,6 +65,7 @@
                     borderWidth: 0,
                     lineTension: 0
                 });
+
                 var ctx = document.getElementById("canvas");
                 if(chart != null) {
                     chart.destroy();
@@ -111,16 +106,16 @@
     <body onload="update();">
         <table>
             <tr>
-                <td colspan="3">
-                    In a certain city, the daily consumption of electric power (mkW) can be treated as a 
-                    random variable having a gamma distribution with variance=<input id="option-variance" class="text-input" type="number" value="12" oninput="update()"> and mean=<input id="option-mean" class="text-input" type="number" value="6" oninput="update()">. If the power plant of this city has a daily 
-                    capacity of <input id="option-x" class="text-input" type="number" value="12" oninput="update()">mkW, what is the probability that this power supply will be <select id="option-probability" class="text-input" onchange="update()"><option>inadequate</option><option>adequate</option></select> on any given day?
-                </td>
+                <td>Lambda:</td>
+                <td>Probability:</td>
+                <td>x:</td>
+                <td>Result:</td>
             </tr>
-            <tr class="separator">
-                <td id="answere-k">k = ...</td>
-                <td id="answere-theta">&theta; = ...</td>
-                <td id="answere-p">P(X) = ...</td>
+            <tr>
+                <td><input id="option-lambda" type="number" value="0.25" oninput="update()"></td>
+                <td><input id="option-x" type="number" value="7" oninput="update()"></td>
+                <td><select id="option-probability" class="text-input" onchange="update()"><option>P(X &lt;= x)</option><option>P(X >= x)</option></select></td>
+                <td id="result"></td>
             </tr>
         </table>
         <canvas id="canvas"></canvas>      

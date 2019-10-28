@@ -19,7 +19,7 @@ class GammaDistribution {
                 SMathJsUtils.isValidNumber(x);
                 return Math.pow(x, z - 1) * Math.pow(Math.E, -1 * x);
             };
-        for (var i = integralLowerBound; i <= integralUpperBound; i += stepSize) {
+        for (var i=integralLowerBound; i<=integralUpperBound; i+=stepSize) {
             var l = egf(z, i),
                 h = egf(z, i + stepSize);
             area += ((l + h) / 2) * stepSize;
