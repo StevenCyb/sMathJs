@@ -67,7 +67,7 @@ class FDistribution {
     }
 
     /*
-    * Calculate the distribution mean for a given degree of freedom.
+    * Calculate the distribution mean for a degree of freedom.
     * Parameter:
     * degreeOfFreedom: Degree of Freedom of population
     * Return:
@@ -97,7 +97,7 @@ class FDistribution {
     }
 
     /*
-    * Calculate the distribution mode by given degree of freedoms.
+    * Calculate the distribution mode.
     * Parameter:
     * degreeOfFreedom1: Degree of Freedom of first population
     * degreeOfFreedom2: Degree of Freedom of second population
@@ -114,7 +114,7 @@ class FDistribution {
     }
 
     /*
-    * Calculate the variance by given degree of freedoms.
+    * Calculate the variance.
     * Parameter:
     * degreeOfFreedom1: Degree of Freedom of first population
     * degreeOfFreedom2: Degree of Freedom of second population
@@ -131,7 +131,7 @@ class FDistribution {
     }
 
     /*
-    * Calculate the skewness by given degree of freedoms.
+    * Calculate the skewness.
     * Parameter:
     * degreeOfFreedom1: Degree of Freedom of first population
     * degreeOfFreedom2: Degree of Freedom of second population
@@ -148,7 +148,7 @@ class FDistribution {
     }
 
     /*
-    * Calculation of the F-Ratio from given sample variances.
+    * Calculation of the F-Ratio from sample variances.
     * Parameter:
     * sampleVariance1: First sample variance
     * sampleVariance2: Second sample variance

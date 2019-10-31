@@ -1,0 +1,158 @@
+<html>
+	<head>
+        <title>Demo - Poisson-Distribution</title>
+        <meta charset="utf-8"/>
+        <script src="chartjs/Chart.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="chartjs/Chart.min.css">
+
+        <script src="../src/utils.js"></script>
+        <script src="../src/distributions/poisson_distribution.js"></script>
+
+        <style>
+            table {margin: 0 auto; background-color: #cccccc; padding: 5px 10px; max-width: 800px;}
+            table input, table select {width: 100%;}
+            table td {padding: 0 10px;}
+            input[type=button] {cursor: pointer;}
+            input:disabled, select:disabled {cursor: no-drop;}
+            tr.separator td {border-top: 1px solid #868686; padding-top: 5px;}
+            #additional-options {font-size: 12px; overflow-x: hidden; overflow-y: auto; width: 240px; max-height: 85px; text-align: right;}
+            #additional-options input, #additional-options select {width: 150px;}
+            #learning-rate-label, #momentum-label, #gamma-label, #beta-1-label, #beta-2-label {display:none;}
+            canvas {-moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; margin: 0 auto; margin-top: 10px; max-width: 800px; max-height: 500px; }
+            #option-probability {width: 90px;}
+        </style>
+        <script>
+            var chart = null;
+            function update(syncValue) {
+                var diagramLabels = [],
+                    diagramDistribution = [],
+                    diagramData = [],
+                    highlightData = [],
+                    verticalLine = [],
+                    lambda = parseFloat(document.getElementById("option-lambda").value),
+                    k = parseFloat(document.getElementById("option-k").value),
+                    probabilityOption = document.getElementById("option-probability").value;
+                
+                if(probabilityOption == "P(X = k)") {
+                    document.getElementById("result").innerHTML = PoissonDistribution.pmf(lambda, k).toFixed(3);
+                } else  if(probabilityOption == "P(X >= k)") {
+                    document.getElementById("result").innerHTML = (1 - PoissonDistribution.cdf(lambda, k)).toFixed(3);
+                } else {
+                    document.getElementById("result").innerHTML = PoissonDistribution.cdf(lambda, k).toFixed(3);
+                }
+                
+                for(var i=0.0; i<=20.0; i++) {
+                    diagramLabels.push(i);
+                    var value = PoissonDistribution.pmf(lambda, i);
+                    diagramDistribution.push(value);
+                    if(probabilityOption == "P(X <= k)" && i <= k) {
+                        highlightData.push(value);
+                    }
+                }
+
+                diagramData.push({
+                    data: diagramDistribution,
+                    borderColor: "rgba(51, 51, 51, 1)",
+                    borderWidth: 0,
+				    lineTension: 0
+                });
+                if(probabilityOption == "P(X <= k)") {
+                    diagramData.push({
+                        data: highlightData,
+                        backgroundColor: "rgba(250, 146, 0, 1)",
+                        borderColor: "rgba(250, 146, 0, 1)",
+                        borderWidth: 0,
+                        lineTension: 0
+                    });
+                } else {
+                    verticalLine.push({"index": k, "color": "rgb(255,57,46)", "text":""});
+                }
+
+                // MODIFIED PLUGIN from https://stackoverflow.com/questions/30256695/chart-js-drawing-an-arbitrary-vertical-line
+                const verticalLinePlugin = {
+                    getLinePosition: function (chart, index) {
+                        const meta = chart.getDatasetMeta(0);
+                        const data = meta.data;
+                        return data[index]._model.x;
+                    },
+                    renderVerticalLine: function (chartInstance, lineOption) {
+                        const lineLeftOffset = this.getLinePosition(chartInstance, lineOption["index"]);
+                        if(lineLeftOffset != undefined) {
+                            const scale = chartInstance.scales['y-axis-0'];
+                            const context = chartInstance.chart.ctx;
+                            // render vertical line
+                            context.beginPath();
+                            context.strokeStyle = lineOption["color"];
+                            context.moveTo(lineLeftOffset, scale.top);
+                            context.lineTo(lineLeftOffset, scale.bottom);
+                            context.stroke();
+                            // write label
+                            context.fillStyle = lineOption["color"];
+                            context.textAlign = 'center';
+                            context.fillText(lineOption["text"], lineLeftOffset, (scale.bottom - scale.top) / 2 + scale.top);
+                        }
+                    },
+                    afterDatasetsDraw: function (chart, easing) {
+                        if (chart.config.lineAtIndex) {
+                            chart.config.lineAtIndex.forEach(lineOption => this.renderVerticalLine(chart, lineOption));
+                        }
+                    }
+                };
+                Chart.plugins.register(verticalLinePlugin);
+                // END OF PLUGIN
+                var ctx = document.getElementById("canvas");
+                if(chart != null) {
+                    chart.destroy();
+                }
+                chart = new Chart(ctx, {
+                    type: 'line',
+                    lineAtIndex: verticalLine,
+                    data: {
+                            labels: diagramLabels,
+                            datasets: diagramData 
+                        },
+                        options: {
+                            legend: { display: false },
+                            elements: {
+                                point:{ radius: 0 }
+                            },
+                            scales: {
+                                yAxes: [{
+                                    ticks: { beginAtZero:true }
+                                }],
+                                xAxes: [{
+                                    ticks: { callback: function(value, index, values) {return parseFloat(value).toFixed(0); },
+                                    suggestedMin: 0,
+                                    beginAtZero: true,
+                                    autoSkip: false,
+                                    maxTicksLimit: 21,
+                                    steps: 21,
+                                    stepSize: 1.0,
+                                    stepValue: 1.0,
+                                    max: 20
+                                }
+                            }]
+                        }
+                    }
+                });
+            };
+        </script>
+    </head>
+    <body onload="update();">
+        <table>
+            <tr>
+                <td>Lambda:</td>
+                <td>Probability:</td>
+                <td>k:</td>
+                <td>Result:</td>
+            </tr>
+            <tr>
+                <td><input id="option-lambda" type="number" value="4" oninput="update()"></td>
+                <td><input id="option-k" type="number" value="7" oninput="update()"></td>
+                <td><select id="option-probability" class="text-input" onchange="update()"><option>P(X = k)</option><option>P(X &lt;= k)</option></select></td>
+                <td id="result"></td>
+            </tr>
+        </table>
+        <canvas id="canvas"></canvas>      
+    </body>
+</html>

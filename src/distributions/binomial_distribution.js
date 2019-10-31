@@ -51,7 +51,7 @@ class BinomialDistribution {
     }
 
 	/*
-	 * Calculate the expected value `E` by sample-size and probability.
+	 * Calculate the expected value `E`.
 	 * Parameter:
 	 * n: Sample-size
 	 * p: Percentage

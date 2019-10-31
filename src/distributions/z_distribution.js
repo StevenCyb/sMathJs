@@ -1,6 +1,6 @@
 class ZDistribution {
 	/*
-	 * Calculate the probability from x1 to x2.
+	 * Calculate the probability for x.
 	 * Parameter:
 	 * mean: Mean of distribution
 	 * sd: Standard deviation of distribution
@@ -16,7 +16,7 @@ class ZDistribution {
     }
 
 	/*
-	 * Calculate the normal PDF.
+	 * Calculate the normal PDF for x.
 	 * Parameter:
 	 * x: Value for which the PDF is calculated
 	 * stepSize: Step-size for this calculation (optional, default: 0.1)
@@ -55,7 +55,7 @@ class ZDistribution {
     }
 
 	/*
-	 * Get the min. and max. by mean and standard deviation (dirty solution).
+	 * Get the min. and max. (dirty solution).
 	 * Parameter:
 	 * mean: Mean of distribution
 	 * sd: Standard deviation of distribution
@@ -71,7 +71,7 @@ class ZDistribution {
     }
 	
     /*
-    * Calculate the standard deviation from an array.
+    * Calculate the standard deviation.
     * Parameter:
     * mean: Mean of array
     * arr: Array for which the variance should be calculated
@@ -131,7 +131,7 @@ class ZDistribution {
     }
     
 	/*
-	 * Calculate the confidence interval with known standard deviation.
+	 * Calculate the confidence interval.
 	 * Parameter:
 	 * Mean: Mean of distribution
 	 * sd: Standard deviation of distribution 

@@ -140,7 +140,7 @@ class TDistribution {
     }
 
     /*
-    * Calculate the variance by given degrees of freedom.
+    * Calculate the variance.
     * Parameter:
     * df: Degrees of freedom
     * Return:

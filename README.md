@@ -1,20 +1,6 @@
 # sMathJs - A Small Statistics Library 
 This project was mainly developed for learning purposes, but will also be used in a future planned project. 
 The project isn't finished yet. Currently the following tasks are planned:
-- Lib & Demo Distribution
-    - <del>Binomial Distribution</del>
-    - <del>Z-Distribution / Gaussian Distribution</del>
-    - <del>Central + noncentral T-Student Distribution</del>
-    - <del>F-Distribution</del>
-    - <del>Gamma Distribution</del>
-    - <del>Exponential Distribution</del>
-    - Poisson Distribution
-    - Beta Distribution <!-- in student t -->
-    - Lognormal Distribution
-    - Continuous Equal Distribution / Rectangular Distribution
-    - Weibull Distribution
-    - Laplace Distribution
-    - Hypergeometric Distribution
  - Lib & Demo for Regressions
     - <del>Polynomial-Regression</del>
     - Logarithmic-Regression
@@ -23,7 +9,22 @@ The project isn't finished yet. Currently the following tasks are planned:
     - Power-Regression
     - Logarithmic-Regression
     - Hyperbolic-Regression
- - In addition, the entire documentation and implementation will be optimized and cleaned.
+    - Update sub-/main-documentations + Rewrite functions descriptions
+- Lib & Demo Distribution
+    - <del>Binomial Distribution</del>
+    - <del>Z-Distribution / Gaussian Distribution</del>
+    - <del>Central + noncentral T-Student Distribution</del>
+    - <del>F-Distribution</del>
+    - <del>Gamma Distribution</del>
+    - <del>Exponential Distribution</del>
+    - <del>Poisson Distribution</del>
+    - Beta Distribution <!-- in student t -->
+    - Lognormal Distribution
+    - Continuous Equal Distribution / Rectangular Distribution
+    - Weibull Distribution
+    - Laplace Distribution
+    - Hypergeometric Distribution
+    - Create sub-/main-documentations with equations and descriptions + Rewrite functions descriptions
  
 **If you find a bug or miss an equation, please let me know.**
 
@@ -38,6 +39,7 @@ The project isn't finished yet. Currently the following tasks are planned:
     - [F-Distribution](#f)
     - [Gamma-Distribution](#g)
     - [Exponential-Distribution](#exp)
+    - [Poisson-Distribution](#pois)
 <a name="how_to_use_it"></a>
 ## How To Use It
 Bind the JS scripts as follows. For detailed information for the corresponding distribution, check out the following sections.
@@ -50,6 +52,7 @@ For distribution include `utils` and the required `distributions`.
 <script src="src/distributions/z_distribution.js"></script>
 <script src="src/distributions/gamma_distribution.js"></script>
 <script src="src/distributions/exponential_distribution.js"></script>
+<script src="src/distributions/poisson_distribution.js"></script>
 ```
 For data fitting `utils`, `optimizer` and `regression`.
 ```
@@ -108,4 +111,9 @@ A library to create and use a Exponential-Distribution.
 A description of the functionalities can be found [here](/doc/exponential_distribution.md).
 The corresponding demo for this distribution looks like this.
 ![Exponential-Distribution](/doc/media/exponential_distribution.gif)
-
+<a name="pois"></a>
+### Poisson-Distribution
+A library to create and use a Poisson-Distribution.
+A description of the functionalities can be found [here](/doc/poisson_distribution.md).
+The corresponding demo for this distribution looks like this.
+![Poisson-Distribution](/doc/media/poisson_distribution.gif)

@@ -74,7 +74,7 @@ class GammaDistribution {
     }
 
 	/*
-	 * Calculate the expected value by k and theta.
+	 * Calculate the expected value.
 	 * Parameter:
 	 * k: Shape of this distribution
 	 * theta: Stretching of this distribution
@@ -88,7 +88,7 @@ class GammaDistribution {
     }
 
 	/*
-	 * Calculate the shape (k) by given mean and theta.
+	 * Calculate the shape (k).
 	 * Parameter:
 	 * mean: Mean of this distribution
 	 * theta: Stretching of this distribution
@@ -100,7 +100,7 @@ class GammaDistribution {
     }
 
 	/*
-	 * Calculate the stretching (theta) by given variance and mean.
+	 * Calculate the stretching (theta).
 	 * Parameter:
      * variance: Variance of the distribution
 	 * mean: Mean of this distribution
