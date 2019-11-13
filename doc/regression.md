@@ -150,6 +150,7 @@ This library includes the following optimizers:
 - Nesterov
 - Rmsprop
 - Vanilla
+
 All these optimizers have the same functions, which are explained below. 
 #### Constructor
 The constructor is the only point where the optimizers differ.

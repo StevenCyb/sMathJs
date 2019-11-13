@@ -18,7 +18,8 @@ The project isn't finished yet. Currently the following tasks are planned:
     - <del>Gamma Distribution</del>
     - <del>Exponential Distribution</del>
     - <del>Poisson Distribution</del>
-    - Beta Distribution <!-- in student t -->
+    - <del>Beta Distribution</del>
+    - Arcsine Distribution
     - Lognormal Distribution
     - Continuous Equal Distribution / Rectangular Distribution
     - Weibull Distribution
@@ -40,6 +41,7 @@ The project isn't finished yet. Currently the following tasks are planned:
     - [Gamma-Distribution](#g)
     - [Exponential-Distribution](#exp)
     - [Poisson-Distribution](#pois)
+    - [Beta-Distribution](#b)
 <a name="how_to_use_it"></a>
 ## How To Use It
 Bind the JS scripts as follows. For detailed information for the corresponding distribution, check out the following sections.
@@ -117,3 +119,9 @@ A library to create and use a Poisson-Distribution.
 A description of the functionalities can be found [here](/doc/poisson_distribution.md).
 The corresponding demo for this distribution looks like this.
 ![Poisson-Distribution](/doc/media/poisson_distribution.gif)
+<a name="b"></a>
+### Beta-Distribution
+A library to create and use a Beta-Distribution.
+A description of the functionalities can be found [here](/doc/beta_distribution.md).
+The corresponding demo for this distribution looks like this.
+![Beta-Distribution](/doc/media/beta_distribution.gif)

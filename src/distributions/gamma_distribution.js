@@ -15,8 +15,6 @@ class GammaDistribution {
         SMathJsUtils.isValidNumber(integralUpperBound);
         var area = 0.0,
             egf = function(z, x) {
-                SMathJsUtils.isValidNumber(z);
-                SMathJsUtils.isValidNumber(x);
                 return Math.pow(x, z - 1) * Math.pow(Math.E, -1 * x);
             };
         for (var i=integralLowerBound; i<=integralUpperBound; i+=stepSize) {
