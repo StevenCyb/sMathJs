@@ -20,7 +20,7 @@ The project isn't finished yet. Currently the following tasks are planned:
     - <del>Poisson Distribution</del>
     - <del>Beta Distribution</del>
     - <del>Arcsine Distribution</del>
-    - Lognormal Distribution
+    - <del>Log-Normal Distribution</del>
     - Continuous Equal Distribution / Rectangular Distribution
     - Weibull Distribution
     - Laplace Distribution
@@ -43,6 +43,7 @@ The project isn't finished yet. Currently the following tasks are planned:
     - [Poisson-Distribution](#pois)
     - [Beta-Distribution](#b)
     - [Arcsine-Distribution](#arcsine)
+    - [Log-Normal-Distribution](#lnorm)
 <a name="how_to_use_it"></a>
 ## How To Use It
 Bind the JS scripts as follows. For detailed information for the corresponding distribution, check out the following sections.
@@ -131,4 +132,11 @@ The corresponding demo for this distribution looks like this.
 A library to create and use a Arcsine-Distribution with or without bounded support.
 A description of the functionalities can be found [here](/doc/arcsine_distribution.md).
 The corresponding demo for this distribution looks like this.
-![Beta-Distribution](/doc/media/arcsine_distribution.gif)
+![Arcsine-Distribution](/doc/media/arcsine_distribution.gif)
+<a name="lnorm"></a>
+### Log-Normal-Distribution
+A library to create and use a Log-Normal-Distribution.
+A description of the functionalities can be found [here](/doc/log_normal_distribution.md).
+The corresponding demo for this distribution looks like this.
+![Log-Normal-Distribution](/doc/media/log_normal_distribution.gif)
+
