@@ -19,13 +19,13 @@ The project isn't finished yet. Currently the following tasks are planned:
     - <del>Exponential Distribution</del>
     - <del>Poisson Distribution</del>
     - <del>Beta Distribution</del>
-    - Arcsine Distribution
+    - <del>Arcsine Distribution</del>
     - Lognormal Distribution
     - Continuous Equal Distribution / Rectangular Distribution
     - Weibull Distribution
     - Laplace Distribution
     - Hypergeometric Distribution
-    - Create sub-/main-documentations with equations and descriptions + Rewrite functions descriptions
+    - Create sub-/main-documentations with equations and descriptions + Rewrite function descriptions
  
 **If you find a bug or miss an equation, please let me know.**
 
@@ -42,6 +42,7 @@ The project isn't finished yet. Currently the following tasks are planned:
     - [Exponential-Distribution](#exp)
     - [Poisson-Distribution](#pois)
     - [Beta-Distribution](#b)
+    - [Arcsine-Distribution](#arcsine)
 <a name="how_to_use_it"></a>
 ## How To Use It
 Bind the JS scripts as follows. For detailed information for the corresponding distribution, check out the following sections.
@@ -125,3 +126,9 @@ A library to create and use a Beta-Distribution.
 A description of the functionalities can be found [here](/doc/beta_distribution.md).
 The corresponding demo for this distribution looks like this.
 ![Beta-Distribution](/doc/media/beta_distribution.gif)
+<a name="arcsine"></a>
+### Arcsine-Distribution
+A library to create and use a Arcsine-Distribution with or without bounded support.
+A description of the functionalities can be found [here](/doc/arcsine_distribution.md).
+The corresponding demo for this distribution looks like this.
+![Beta-Distribution](/doc/media/arcsine_distribution.gif)
