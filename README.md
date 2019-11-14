@@ -21,7 +21,7 @@ The project isn't finished yet. Currently the following tasks are planned:
     - <del>Beta Distribution</del>
     - <del>Arcsine Distribution</del>
     - <del>Log-Normal Distribution</del>
-    - Continuous Equal Distribution / Rectangular Distribution
+    - <del>Uniform Distribution</del>
     - Weibull Distribution
     - Laplace Distribution
     - Hypergeometric Distribution
@@ -44,6 +44,7 @@ The project isn't finished yet. Currently the following tasks are planned:
     - [Beta-Distribution](#b)
     - [Arcsine-Distribution](#arcsine)
     - [Log-Normal-Distribution](#lnorm)
+    - [Uniform-Distribution](#uniform)
 <a name="how_to_use_it"></a>
 ## How To Use It
 Bind the JS scripts as follows. For detailed information for the corresponding distribution, check out the following sections.
@@ -139,4 +140,11 @@ A library to create and use a Log-Normal-Distribution.
 A description of the functionalities can be found [here](/doc/log_normal_distribution.md).
 The corresponding demo for this distribution looks like this.
 ![Log-Normal-Distribution](/doc/media/log_normal_distribution.gif)
+<a name="uniform"></a>
+### Uniform-Distribution
+A library to create and use a Uniform-Distribution which is also known as continuous uniform distribution or rectangular distribution.
+A description of the functionalities can be found [here](/doc/uniform_distribution.md).
+The corresponding demo for this distribution looks like this.
+![Log-Normal-Distribution](/doc/media/uniform_distribution.gif)
+
 

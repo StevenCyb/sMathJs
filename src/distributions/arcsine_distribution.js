@@ -19,7 +19,7 @@ class ArcsineDistribution {
 	 * Parameter:
 	 * x: To with calculate the probability density
 	 * Return:
-	 * CDF for x
+	 * CDF to x
 	 */
     static cdf(x) {
         SMathJsUtils.isValidNumber(x);
