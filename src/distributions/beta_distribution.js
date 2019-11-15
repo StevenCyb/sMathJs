@@ -6,31 +6,22 @@ class BetaDistribution {
 	 * beta: Beta shape
 	 * x: To with calculate the probability density
      * stepSize: Step-size for this calculation (optional, default:0.01)
+     * integralLowerBound: Lower bound for gamma integral because js can not use infinity (optional, default:0)
      * integralUpperBound: Upper bound for gamma integral because js can not use infinity (optional, default:100)
 	 * Return:
 	 * PDF for x
 	 */
-    static pdf(alpha, beta, x, stepSize=0.01, integralUpperBound=100) {
+    static pdf(alpha, beta, x, stepSize=0.01, integralLowerBound=0, integralUpperBound=100) {
         SMathJsUtils.isValidNumber(alpha);
         SMathJsUtils.isValidNumber(beta);
         SMathJsUtils.isValidNumber(x);
+        SMathJsUtils.isValidNumber(integralLowerBound);
+        SMathJsUtils.isValidNumber(integralUpperBound);
         if(alpha < 1.0 || beta < 1.0) {
             throw "For alpha or beta smaller 1.0 use the Arcsine Distribution.";
         }
         var betaFunction = function(alpha, beta, stepSize, integralUpperBound) {
-            var gammaFunction = function(z, stepSize, integralUpperBound) {
-                var area = 0.0,
-                    egf = function(z, x) {
-                        return Math.pow(x, z - 1) * Math.pow(Math.E, -1 * x);
-                    };
-                for (var i=0; i<=integralUpperBound; i+=stepSize) {
-                    var l = egf(z, i),
-                        h = egf(z, i + stepSize);
-                    area += ((l + h) / 2) * stepSize;
-                }
-                return area;
-            };
-            return (gammaFunction(alpha, stepSize, integralUpperBound) * gammaFunction(beta, stepSize, integralUpperBound)) / gammaFunction(alpha + beta, stepSize, integralUpperBound);
+            return (GammaDistribution.eulerGammaFunction(alpha, stepSize, integralLowerBound, integralUpperBound) * GammaDistribution.eulerGammaFunction(beta, stepSize, integralLowerBound, integralUpperBound)) / GammaDistribution.eulerGammaFunction(alpha + beta, stepSize, integralLowerBound, integralUpperBound);
         };
         return (Math.pow(x, alpha - 1) * Math.pow(1 - x, beta - 1)) / betaFunction(alpha, beta, stepSize, integralUpperBound);
     }

@@ -49,15 +49,20 @@ The project isn't finished yet. Currently the following tasks are planned:
 ## How To Use It
 Bind the JS scripts as follows. For detailed information for the corresponding distribution, check out the following sections.
 For distribution include `utils` and the required `distributions`.
+Note that the Gamma-Distribution must also be also included for the T-, F-, Beta- and Weibull-Distributions, since the distributions use the Euler Gamma Function.
 ```
 <script src="src/utils.js"></script>
 <script src="src/distributions/binomial_distribution.js"></script>
+<script src="src/distributions/gamma_distribution.js"></script>
 <script src="src/distributions/f_distribution.js"></script>
 <script src="src/distributions/t_distribution.js"></script>
 <script src="src/distributions/z_distribution.js"></script>
-<script src="src/distributions/gamma_distribution.js"></script>
 <script src="src/distributions/exponential_distribution.js"></script>
 <script src="src/distributions/poisson_distribution.js"></script>
+<script src="src/distributions/log_normal_distribution.js"></script>
+<script src="src/distributions/arcsine_distribution.js"></script>
+<script src="src/distributions/beta_distribution.js"></script>
+<script src="src/distributions/uniform_distribution.js"></script>
 ```
 For data fitting `utils`, `optimizer` and `regression`.
 ```
@@ -73,8 +78,8 @@ The utils script contains functions that are used multiple times in different di
 This part of the library offers some regressions in combination with different optimizers or with a best fit calculation.
 A description of the regression and optimizer functionalities can be found [here](/doc/regression.md).
 <p float="middle">
-  <img src="/doc/media/regression_linear.gif" width="48%" />
-  <img src="/doc/media/regression_overview.gif" width="48%" /> 
+  <img src="/doc/media/regression_illustration/regression_linear.gif" width="48%" />
+  <img src="/doc/media/regression_illustration/regression_overview.gif" width="48%" /> 
 </p>
 
 <a name="distributions"></a>
@@ -85,66 +90,66 @@ This part of the library provides probability distributions for statistical eval
 A library to create and use a Binomial Distribution.
 A description of the functionalities can be found [here](/doc/binomial_distribution.md).
 The corresponding demo for this distribution looks like this.
-![Binomial-Distribution](/doc/media/binomial_distribution.gif)
+![Binomial-Distribution](/doc/media/distribution_illustration/binomial_distribution.gif)
 <a name="z"></a>
 ### Z-Distribution / Gaussian distribution
 A library to create and use a Z-Distribution.
 The corresponding demo for this distribution looks like this.
 A description of the functionalities can be found [here](/doc/z_distribution.md).
-![Binomial-Distribution](/doc/media/z_distribution.gif)
+![Binomial-Distribution](/doc/media/distribution_illustration/z_distribution.gif)
 <a name="t"></a>
 ### Centred + Noncentred T-Distribution
 A library to create and use a centred and noncentred T-Distribution.
 A description of the functionalities can be found [here](/doc/t_distribution.md).
 The corresponding demo for this distribution looks like this.
-![Binomial-Distribution](/doc/media/t_distribution.gif)
+![Binomial-Distribution](/doc/media/distribution_illustration/t_distribution.gif)
 <a name="f"></a>
 ### F-Distribution
 A library to create and use a F-Distribution.
 A description of the functionalities can be found [here](/doc/f_distribution.md).
 The corresponding demo for this distribution looks like this.
-![F-Distribution](/doc/media/f_distribution.gif)
+![F-Distribution](/doc/media/distribution_illustration/f_distribution.gif)
 <a name="g"></a>
 ### Gamma-Distribution
 A library to create and use a Gamma-Distribution.
 A description of the functionalities can be found [here](/doc/gamma_distribution.md).
 The corresponding demo for this distribution looks like this.
-![Gamma-Distribution](/doc/media/gamma_distribution.gif)
+![Gamma-Distribution](/doc/media/distribution_illustration/gamma_distribution.gif)
 <a name="exp"></a>
 ### Exponential-Distribution
 A library to create and use a Exponential-Distribution.
 A description of the functionalities can be found [here](/doc/exponential_distribution.md).
 The corresponding demo for this distribution looks like this.
-![Exponential-Distribution](/doc/media/exponential_distribution.gif)
+![Exponential-Distribution](/doc/media/distribution_illustration/exponential_distribution.gif)
 <a name="pois"></a>
 ### Poisson-Distribution
 A library to create and use a Poisson-Distribution.
 A description of the functionalities can be found [here](/doc/poisson_distribution.md).
 The corresponding demo for this distribution looks like this.
-![Poisson-Distribution](/doc/media/poisson_distribution.gif)
+![Poisson-Distribution](/doc/media/distribution_illustration/poisson_distribution.gif)
 <a name="b"></a>
 ### Beta-Distribution
 A library to create and use a Beta-Distribution.
 A description of the functionalities can be found [here](/doc/beta_distribution.md).
 The corresponding demo for this distribution looks like this.
-![Beta-Distribution](/doc/media/beta_distribution.gif)
+![Beta-Distribution](/doc/media/distribution_illustration/beta_distribution.gif)
 <a name="arcsine"></a>
 ### Arcsine-Distribution
 A library to create and use a Arcsine-Distribution with or without bounded support.
 A description of the functionalities can be found [here](/doc/arcsine_distribution.md).
 The corresponding demo for this distribution looks like this.
-![Arcsine-Distribution](/doc/media/arcsine_distribution.gif)
+![Arcsine-Distribution](/doc/media/distribution_illustration/arcsine_distribution.gif)
 <a name="lnorm"></a>
 ### Log-Normal-Distribution
 A library to create and use a Log-Normal-Distribution.
 A description of the functionalities can be found [here](/doc/log_normal_distribution.md).
 The corresponding demo for this distribution looks like this.
-![Log-Normal-Distribution](/doc/media/log_normal_distribution.gif)
+![Log-Normal-Distribution](/doc/media/distribution_illustration/log_normal_distribution.gif)
 <a name="uniform"></a>
 ### Uniform-Distribution
 A library to create and use a Uniform-Distribution which is also known as continuous uniform distribution or rectangular distribution.
 A description of the functionalities can be found [here](/doc/uniform_distribution.md).
 The corresponding demo for this distribution looks like this.
-![Log-Normal-Distribution](/doc/media/uniform_distribution.gif)
+![Log-Normal-Distribution](/doc/media/distribution_illustration/uniform_distribution.gif)
 
 

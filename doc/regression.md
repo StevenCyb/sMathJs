@@ -18,42 +18,42 @@ The regression class `PolynomialRegression` offers the possibility to perform li
 	<tr>
 		<td>0<br>(Linear-zero-Slope)</td>
 		<td>new PolynomialRegression(0);</td>
-		<td><img src="/doc/media/polynomial_0.jpg" width="100%" /></td>
+		<td><img src="/doc/media/regression_illustration/polynomial_0.jpg" width="100%" /></td>
 	</tr>
 	<tr>
 		<td>1<br>(Linear)</td>
 		<td>new PolynomialRegression(1);</td>
-		<td><img src="/doc/media/polynomial_1.jpg" width="100%" /></td>
+		<td><img src="/doc/media/regression_illustration/polynomial_1.jpg" width="100%" /></td>
 	</tr>
 	<tr>
 		<td>2<br>(Quadratic)</td>
 		<td>new PolynomialRegression(2);</td>
-		<td><img src="/doc/media/polynomial_2.jpg" width="100%" /></td>
+		<td><img src="/doc/media/regression_illustration/polynomial_2.jpg" width="100%" /></td>
 	</tr>
 	<tr>
 		<td>3<br>(Cubic)</td>
 		<td>new PolynomialRegression(3);</td>
-		<td><img src="/doc/media/polynomial_3.jpg" width="100%" /></td>
+		<td><img src="/doc/media/regression_illustration/polynomial_3.jpg" width="100%" /></td>
 	</tr>
 	<tr>
 		<td>4</td>
 		<td>new PolynomialRegression(4);</td>
-		<td><img src="/doc/media/polynomial_4.jpg" width="100%" /></td>
+		<td><img src="/doc/media/regression_illustration/polynomial_4.jpg" width="100%" /></td>
 	</tr>
 	<tr>
 		<td>5</td>
 		<td>new PolynomialRegression(5);</td>
-		<td><img src="/doc/media/polynomial_5.jpg" width="100%" /></td>
+		<td><img src="/doc/media/regression_illustration/polynomial_5.jpg" width="100%" /></td>
 	</tr>
 	<tr>
 		<td>6</td>
 		<td>new PolynomialRegression(6);</td>
-		<td><img src="/doc/media/polynomial_6.jpg" width="100%" /></td>
+		<td><img src="/doc/media/regression_illustration/polynomial_6.jpg" width="100%" /></td>
 	</tr>
 	<tr>
 		<td>7</td>
 		<td>new PolynomialRegression(7);</td>
-		<td><img src="/doc/media/polynomial_7.jpg" width="100%" /></td>
+		<td><img src="/doc/media/regression_illustration/polynomial_7.jpg" width="100%" /></td>
 	</tr>
 </table>
 </p>

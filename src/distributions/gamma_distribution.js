@@ -9,7 +9,7 @@ class GammaDistribution {
     * Return:
     * Gamma density for z
     */
-    static eulerGammaFunction = function(z, stepSize, integralLowerBound, integralUpperBound) {
+    static eulerGammaFunction(z, stepSize, integralLowerBound, integralUpperBound) {
         SMathJsUtils.isValidNumber(z);
         SMathJsUtils.isValidNumber(stepSize);
         SMathJsUtils.isValidNumber(integralUpperBound);
