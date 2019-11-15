@@ -23,7 +23,7 @@ The project isn't finished yet. Currently the following tasks are planned:
     - <del>Log-Normal Distribution</del>
     - <del>Uniform Distribution</del>
     - <del>Weibull Distribution</del>
-    - Laplace Distribution
+    - <del>Laplace Distribution</del>
     - Hypergeometric Distribution
     - Create sub-/main-documentations with equations and descriptions + Rewrite function descriptions
  
@@ -46,6 +46,7 @@ The project isn't finished yet. Currently the following tasks are planned:
     - [Log-Normal-Distribution](#lnormal)
     - [Uniform-Distribution](#uniform)
     - [Weibull-Distribution](#weibull)
+    - [Laplace-Distribution](#laplace)
 <a name="how_to_use_it"></a>
 ## How To Use It
 Bind the JS scripts as follows. For detailed information for the corresponding distribution, check out the following sections.
@@ -64,6 +65,8 @@ Note that the Gamma-Distribution must also be also included for the T-, F-, Beta
 <script src="src/distributions/arcsine_distribution.js"></script>
 <script src="src/distributions/beta_distribution.js"></script>
 <script src="src/distributions/uniform_distribution.js"></script>
+<script src="src/distributions/weibull_distribution.js"></script>
+<script src="src/distributions/laplace_distribution.js"></script>
 ```
 For data fitting `utils`, `optimizer` and `regression`.
 ```
@@ -158,4 +161,10 @@ A library to create and use a Weibull-Distribution.
 A description of the functionalities can be found [here](/doc/weibull_distribution.md).
 The corresponding demo for this distribution looks like this.
 ![Weibull-Distribution](/doc/media/distribution_illustration/weibull_distribution.gif)
+<a name="laplace"></a>
+### Laplace-Distribution
+A library to create and use a Laplace-Distribution.
+A description of the functionalities can be found [here](/doc/laplace_distribution.md).
+The corresponding demo for this distribution looks like this.
+![Weibull-Distribution](/doc/media/distribution_illustration/laplace_distribution.gif)
 
