@@ -133,7 +133,7 @@ class ZDistribution {
 	/*
 	 * Calculate the confidence interval.
 	 * Parameter:
-	 * Mean: Mean of distribution
+	 * mean: Mean of distribution
 	 * sd: Standard deviation of distribution 
 	 * n: Sample-Size of distribution
 	 * z: Z for which to calculate
@@ -152,7 +152,7 @@ class ZDistribution {
 	/*
 	 * Calculate z-score for x.
 	 * Parameter:
-	 * Mean: Mean of distribution
+	 * mean: Mean of distribution
 	 * sd: Standard deviation of distribution 
 	 * x: For which to calculate the z-score
 	 * Return:

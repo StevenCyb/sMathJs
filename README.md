@@ -22,7 +22,7 @@ The project isn't finished yet. Currently the following tasks are planned:
     - <del>Arcsine Distribution</del>
     - <del>Log-Normal Distribution</del>
     - <del>Uniform Distribution</del>
-    - Weibull Distribution
+    - <del>Weibull Distribution</del>
     - Laplace Distribution
     - Hypergeometric Distribution
     - Create sub-/main-documentations with equations and descriptions + Rewrite function descriptions
@@ -38,13 +38,14 @@ The project isn't finished yet. Currently the following tasks are planned:
     - [Z-Distribution](#z)
     - [T-Distribution](#t)
     - [F-Distribution](#f)
-    - [Gamma-Distribution](#g)
-    - [Exponential-Distribution](#exp)
-    - [Poisson-Distribution](#pois)
-    - [Beta-Distribution](#b)
+    - [Gamma-Distribution](#gamma)
+    - [Exponential-Distribution](#exponential)
+    - [Poisson-Distribution](#poisson)
+    - [Beta-Distribution](#beta)
     - [Arcsine-Distribution](#arcsine)
-    - [Log-Normal-Distribution](#lnorm)
+    - [Log-Normal-Distribution](#lnormal)
     - [Uniform-Distribution](#uniform)
+    - [Weibull-Distribution](#weibull)
 <a name="how_to_use_it"></a>
 ## How To Use It
 Bind the JS scripts as follows. For detailed information for the corresponding distribution, check out the following sections.
@@ -109,25 +110,25 @@ A library to create and use a F-Distribution.
 A description of the functionalities can be found [here](/doc/f_distribution.md).
 The corresponding demo for this distribution looks like this.
 ![F-Distribution](/doc/media/distribution_illustration/f_distribution.gif)
-<a name="g"></a>
+<a name="gamma"></a>
 ### Gamma-Distribution
 A library to create and use a Gamma-Distribution.
 A description of the functionalities can be found [here](/doc/gamma_distribution.md).
 The corresponding demo for this distribution looks like this.
 ![Gamma-Distribution](/doc/media/distribution_illustration/gamma_distribution.gif)
-<a name="exp"></a>
+<a name="exponential"></a>
 ### Exponential-Distribution
 A library to create and use a Exponential-Distribution.
 A description of the functionalities can be found [here](/doc/exponential_distribution.md).
 The corresponding demo for this distribution looks like this.
 ![Exponential-Distribution](/doc/media/distribution_illustration/exponential_distribution.gif)
-<a name="pois"></a>
+<a name="poisson"></a>
 ### Poisson-Distribution
 A library to create and use a Poisson-Distribution.
 A description of the functionalities can be found [here](/doc/poisson_distribution.md).
 The corresponding demo for this distribution looks like this.
 ![Poisson-Distribution](/doc/media/distribution_illustration/poisson_distribution.gif)
-<a name="b"></a>
+<a name="beta"></a>
 ### Beta-Distribution
 A library to create and use a Beta-Distribution.
 A description of the functionalities can be found [here](/doc/beta_distribution.md).
@@ -139,7 +140,7 @@ A library to create and use a Arcsine-Distribution with or without bounded suppo
 A description of the functionalities can be found [here](/doc/arcsine_distribution.md).
 The corresponding demo for this distribution looks like this.
 ![Arcsine-Distribution](/doc/media/distribution_illustration/arcsine_distribution.gif)
-<a name="lnorm"></a>
+<a name="lnormal"></a>
 ### Log-Normal-Distribution
 A library to create and use a Log-Normal-Distribution.
 A description of the functionalities can be found [here](/doc/log_normal_distribution.md).
@@ -151,5 +152,10 @@ A library to create and use a Uniform-Distribution which is also known as contin
 A description of the functionalities can be found [here](/doc/uniform_distribution.md).
 The corresponding demo for this distribution looks like this.
 ![Log-Normal-Distribution](/doc/media/distribution_illustration/uniform_distribution.gif)
-
+<a name="weibull"></a>
+### Weibull-Distribution
+A library to create and use a Weibull-Distribution.
+A description of the functionalities can be found [here](/doc/weibull_distribution.md).
+The corresponding demo for this distribution looks like this.
+![Weibull-Distribution](/doc/media/distribution_illustration/weibull_distribution.gif)
 
