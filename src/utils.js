@@ -82,13 +82,31 @@ class SMathJsUtils {
     * Return:
     * Faculty of n
     */
-    static faculty(n) {//!n
+    static faculty(n) {
         this.isValidNumber(n);
         var result = 1;
         for(var i = 2; i <= n; i++) {
             result *= i;
         }
         return result;
+    }
+
+    /*
+    * Calculate the binomial coefficient n over k (nCk|nCr).
+    * ╔   ╗
+    * ║ n ║
+    * ║ k ║
+    * ╚   ╝
+    * Parameter:
+    * n: Total of objects
+    * k: Ways to draw
+    * Return:
+    * Binomial coefficient
+    */
+    static binomialCoefficient(n, k) {
+        this.isValidNumber(n);
+        this.isValidNumber(k);
+        return this.faculty(n) / (this.faculty(k) * this.faculty(n - k));
     }
     
     /*

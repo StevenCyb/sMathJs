@@ -1,0 +1,117 @@
+<html>
+	<head>
+        <title>Demo - Hypergeometric-Distribution</title>
+        <meta charset="utf-8"/>
+        <script src="chartjs/Chart.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="chartjs/Chart.min.css">
+
+        <script src="../src/utils.js"></script>
+        <script src="../src/distributions/hypergeometric_distribution.js"></script>
+
+        <style>
+            table {margin: 0 auto; background-color: #cccccc; padding: 5px 10px; max-width: 800px;}
+            table input, table select {width: 100%;}
+            table td {padding: 0 10px;}
+            input[type=button] {cursor: pointer;}
+            input:disabled, select:disabled {cursor: no-drop;}
+            tr.separator td {border-top: 1px solid #868686; padding-top: 5px;}
+            #additional-options {font-size: 12px; overflow-x: hidden; overflow-y: auto; width: 240px; max-height: 85px; text-align: right;}
+            #additional-options input, #additional-options select {width: 150px;}
+            canvas {-moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; margin: 0 auto; margin-top: 10px; max-width: 800px; max-height: 500px; }
+            #option-probability {width: 90px;}
+        </style>
+        <script>
+            var chart = null;
+            function update(syncValue) {
+                var diagramLabels = [],
+                    diagramDistribution = [],
+                    diagramData = [],
+                    highlightData = [],
+                    N = parseFloat(document.getElementById("option-NU").value),
+                    K = parseFloat(document.getElementById("option-KU").value),
+                    n = parseFloat(document.getElementById("option-nl").value),
+                    k = parseFloat(document.getElementById("option-kl").value);
+
+                try {
+                    document.getElementById("result").innerHTML = HypergeometricDistribution.cdf(N, K, n, k).toFixed(3);
+                    for(var i=0.0; i<=20; i+=1) {
+                        i = parseFloat(i.toFixed(2));
+                        diagramLabels.push(i);
+                        var value = HypergeometricDistribution.pmf(N, K, n, i);
+                        diagramDistribution.push(value);
+                        if(i <= k) {
+                            highlightData.push(value);
+                        }
+                    }
+                } catch(e) {
+                    alert(e);
+                }
+
+                diagramData.push({
+                    data: diagramDistribution,
+                    borderColor: "rgba(51, 51, 51, 1)",
+                    borderWidth: 0,
+				    lineTension: 0
+                });
+                diagramData.push({
+                    data: highlightData,
+                    backgroundColor: "rgba(250, 146, 0, 1)",
+                    borderColor: "rgba(250, 146, 0, 1)",
+                    borderWidth: 0,
+                    lineTension: 0
+                });
+
+                var ctx = document.getElementById("canvas");
+                if(chart != null) {
+                    chart.destroy();
+                }
+                chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                            labels: diagramLabels,
+                            datasets: diagramData 
+                        },
+                        options: {
+                            legend: { display: false },
+                            scales: {
+                                yAxes: [{
+                                    ticks: { beginAtZero:true }
+                                }],
+                                xAxes: [{
+                                    ticks: { callback: function(value, index, values) {return parseFloat(value).toFixed(1); },
+                                    suggestedMin: 0,
+                                    beginAtZero: true,
+                                    autoSkip: true,
+                                    maxTicksLimit: 21,
+                                    steps: 21,
+                                    stepSize: 1,
+                                    stepValue: 1,
+                                    max: 21
+                                }
+                            }]
+                        }
+                    }
+                });
+            };
+        </script>
+    </head>
+    <body onload="update();">
+        <table>
+            <tr>
+                <td>N:</td>
+                <td>K:</td>
+                <td>n:</td>
+                <td>k:</td>
+                <td>P(X &lt;= x):</td>
+            </tr>
+            <tr>
+                <td><input id="option-NU" type="number" value="100" min="0" step="1" oninput="update()"></td>
+                <td><input id="option-KU" type="number" value="50" min="0" step="1" oninput="update()"></td>
+                <td><input id="option-nl" type="number" value="20" min="0" step="1" oninput="update()"></td>
+                <td><input id="option-kl" type="number" value="10" min="0" step="1" oninput="update()"></td>
+                <td id="result"></td>
+            </tr>
+        </table>
+        <canvas id="canvas"></canvas>      
+    </body>
+</html>

@@ -4,8 +4,8 @@ class GammaDistribution {
     * Parameter:
     * z: To with calculate the density
     * stepSize: Step-size for this calculation (optional, default:0.1)
-    * integralUpperBound: Upper bound for gamma integral
-    * integralUpperBound: Lower bound for gamma integral
+    * integralLowerBound: Lower bound for integral because js can not use infinity (optional, default:0)
+    * integralUpperBound: Upper bound for integral because js can not use infinity (optional, default:100)
     * Return:
     * Gamma density for z
     */
@@ -32,7 +32,7 @@ class GammaDistribution {
 	 * k: Shape of this distribution
 	 * theta: Stretching of this distribution
      * stepSize: Step-size for this calculation (optional, default:0.01)
-     * integralUpperBound: Upper bound for gamma integral because js can not use infinity (optional, default:100)
+     * integralUpperBound: Upper bound for integral because js can not use infinity (optional, default:100)
 	 * Return:
 	 * PDF for x
 	 */
@@ -55,7 +55,7 @@ class GammaDistribution {
 	 * k: Shape of this distribution
 	 * theta: Stretching of this distribution
      * stepSize: Step-size for this calculation (optional, default:0.01)
-     * integralUpperBound: Upper bound for gamma integral because js can not use infinity (optional, default:100)
+     * integralUpperBound: Upper bound for integral because js can not use infinity (optional, default:100)
 	 * Return:
 	 * CDF for x
 	 */

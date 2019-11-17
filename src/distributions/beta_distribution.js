@@ -6,8 +6,8 @@ class BetaDistribution {
 	 * beta: Beta shape
 	 * x: To with calculate the probability density
      * stepSize: Step-size for this calculation (optional, default:0.01)
-     * integralLowerBound: Lower bound for gamma integral because js can not use infinity (optional, default:0)
-     * integralUpperBound: Upper bound for gamma integral because js can not use infinity (optional, default:100)
+     * integralLowerBound: Lower bound for integral because js can not use infinity (optional, default:0)
+     * integralUpperBound: Upper bound for integral because js can not use infinity (optional, default:100)
 	 * Return:
 	 * PDF for x
 	 */

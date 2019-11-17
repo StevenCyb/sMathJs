@@ -24,7 +24,7 @@ The project isn't finished yet. Currently the following tasks are planned:
     - <del>Uniform Distribution</del>
     - <del>Weibull Distribution</del>
     - <del>Laplace Distribution</del>
-    - Hypergeometric Distribution
+    - <del>Hypergeometric Distribution</del>
     - Create sub-/main-documentations with equations and descriptions + Rewrite function descriptions
  
 **If you find a bug or miss an equation, please let me know.**
@@ -47,6 +47,7 @@ The project isn't finished yet. Currently the following tasks are planned:
     - [Uniform-Distribution](#uniform)
     - [Weibull-Distribution](#weibull)
     - [Laplace-Distribution](#laplace)
+    - [Hypergeometric-Distribution](#hypergeometric)
 <a name="how_to_use_it"></a>
 ## How To Use It
 Bind the JS scripts as follows. For detailed information for the corresponding distribution, check out the following sections.
@@ -67,6 +68,7 @@ Note that the Gamma-Distribution must also be also included for the T-, F-, Beta
 <script src="src/distributions/uniform_distribution.js"></script>
 <script src="src/distributions/weibull_distribution.js"></script>
 <script src="src/distributions/laplace_distribution.js"></script>
+<script src="src/distributions/hypergeometric_distribution.js"></script>
 ```
 For data fitting `utils`, `optimizer` and `regression`.
 ```
@@ -167,4 +169,10 @@ A library to create and use a Laplace-Distribution.
 A description of the functionalities can be found [here](/doc/laplace_distribution.md).
 The corresponding demo for this distribution looks like this.
 ![Weibull-Distribution](/doc/media/distribution_illustration/laplace_distribution.gif)
-
+<a name="hypergeometric"></a>
+### Hypergeometric-Distribution
+A library to create and use a Hypergeometric-Distribution.
+This implementation is limited by the maximum numerical value of JS, so distributions with a population size above 170 may not work.
+A description of the functionalities can be found [here](/doc/hypergeometric_distribution.md).
+The corresponding demo for this distribution looks like this.
+![Weibull-Distribution](/doc/media/distribution_illustration/hypergeometric_distribution.gif)

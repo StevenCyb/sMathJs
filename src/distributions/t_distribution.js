@@ -5,8 +5,8 @@ class TDistribution {
 	 * degreeOfFreedom: Degrees of freedom of this distribution
 	 * x: Value to which calculate the PDF
      * stepSize: Step-size for this calculation (optional, default:0.1)
-     * integralLowerBound: Lower bound for gamma integral because js can not use infinity (optional, default:0)
-     * integralUpperBound: Upper bound for gamma integral because js can not use infinity (optional, default:100)
+     * integralLowerBound: Lower bound for integral because js can not use infinity (optional, default:0)
+     * integralUpperBound: Upper bound for integral because js can not use infinity (optional, default:100)
 	 * Return:
 	 * PDF for x
 	 */
@@ -26,8 +26,8 @@ class TDistribution {
 	 * x1: Value from which calculate the CDF
 	 * x2: Value to which calculate the CDF
      * stepSize: Step-size for this calculation (optional, default:0.1)
-     * integralLowerBound: Lower bound for gamma integral because js can not use infinity (optional, default:0)
-     * integralUpperBound: Upper bound for gamma integral because js can not use infinity (optional, default:100)
+     * integralLowerBound: Lower bound for integral because js can not use infinity (optional, default:0)
+     * integralUpperBound: Upper bound for integral because js can not use infinity (optional, default:100)
 	 * Return:
 	 * CDF from x1 to x2
 	 */
@@ -55,8 +55,8 @@ class TDistribution {
 	 * x1: From position x1
 	 * x2: To position x2
      * stepSize: Step-size for this calculation (optional, default:0.1)
-     * integralLowerBound: Lower bound for gamma integral because js can not use infinity (optional, default:0)
-     * integralUpperBound: Upper bound for gamma integral because js can not use infinity (optional, default:100)
+     * integralLowerBound: Lower bound for integral because js can not use infinity (optional, default:0)
+     * integralUpperBound: Upper bound for integral because js can not use infinity (optional, default:100)
 	 * Return:
 	 * Probability for x1 to x2
 	 */
@@ -83,8 +83,8 @@ class TDistribution {
 	 * x1: Value from which calculate the CDF
 	 * x2: Value to which calculate the CDF
      * stepSize: Step-size for this calculation (optional, default:0.1)
-     * integralLowerBound: Lower bound for gamma integral because js can not use infinity (optional, default:0)
-     * integralUpperBound: Upper bound for gamma integral because js can not use infinity (optional, default:100)
+     * integralLowerBound: Lower bound for integral because js can not use infinity (optional, default:0)
+     * integralUpperBound: Upper bound for integral because js can not use infinity (optional, default:100)
 	 * Return:
 	 * CDF from x1 to x2
 	 */

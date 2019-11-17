@@ -55,8 +55,8 @@ class WeibullDistribution {
 	 * lambda: Distribution lambda
 	 * k: Modulus (k<1 => Failure rate decreases, k=1 => Failure rate is constant, k>1 => Failure rate increases)
 	 * stepSize: Step-size for this calculation (optional, default:0.01)
-     * integralUpperBound: Upper bound for gamma integral
-     * integralUpperBound: Lower bound for gamma integral
+     * integralLowerBound: Lower bound for integral because js can not use infinity (optional, default:0)
+     * integralUpperBound: Upper bound for integral because js can not use infinity (optional, default:100)
 	 * Return:
 	 * Mean
 	 */
@@ -121,8 +121,8 @@ class WeibullDistribution {
 	 * lambda: Distribution lambda
 	 * k: Modulus (k<1 => Failure rate decreases, k=1 => Failure rate is constant, k>1 => Failure rate increases)
 	 * stepSize: Step-size for this calculation (optional, default:0.01)
-     * integralUpperBound: Upper bound for gamma integral
-     * integralUpperBound: Lower bound for gamma integral
+     * integralLowerBound: Lower bound for integral because js can not use infinity (optional, default:0)
+     * integralUpperBound: Upper bound for integral because js can not use infinity (optional, default:100)
 	 * Return:
 	 * Variance
 	 */
@@ -143,8 +143,8 @@ class WeibullDistribution {
 	 * stepSize: Step-size for this calculation (optional, default:0.01)
 	 * mean: Mean of distribution
 	 * sd: Standard deviation of distribution 
-     * integralUpperBound: Upper bound for gamma integral
-     * integralUpperBound: Lower bound for gamma integral
+     * integralLowerBound: Lower bound for integral because js can not use infinity (optional, default:0)
+     * integralUpperBound: Upper bound for integral because js can not use infinity (optional, default:100)
 	 * Return:
 	 * Skewness
 	 */

@@ -6,8 +6,8 @@ class FDistribution {
 	 * degreeOfFreedom2: Degree of Freedom of second population
 	 * x: Value to which calculate the PDF
      * stepSize: Step-size for this calculation (optional, default:0.1)
-     * integralLowerBound: Lower bound for gamma integral because js can not use infinity (optional, default:0)
-     * integralUpperBound: Upper bound for gamma integral because js can not use infinity (optional, default:100)
+     * integralLowerBound: Lower bound for integral because js can not use infinity (optional, default:0)
+     * integralUpperBound: Upper bound for integral because js can not use infinity (optional, default:100)
 	 * Return:
 	 * Probability to x
 	 */
@@ -32,8 +32,8 @@ class FDistribution {
 	 * degreeOfFreedom2: Degree of Freedom of second population
 	 * x: Value to which calculate the PDF
 	 * stepSize: Step-size for this calculation (optional, default:0.001)
-     * integralLowerBound: Lower bound for gamma integral because js can not use infinity (optional, default:0)
-     * integralUpperBound: Upper bound for gamma integral because js can not use infinity (optional, default:100)
+     * integralLowerBound: Lower bound for integral because js can not use infinity (optional, default:0)
+     * integralUpperBound: Upper bound for integral because js can not use infinity (optional, default:100)
 	 * Return:
 	 * CDF for x
 	 */
