@@ -34,6 +34,7 @@ The project isn't finished yet. Currently the following tasks are planned:
 - [Utils](#utils)
 - [Regression](#regression)
 - [Distributions](#distributions)
+    - [Pearson-Plot](#pearson)
     - [Binomial Distribution](#binomial)
     - [Z-Distribution](#z)
     - [T-Distribution](#t)
@@ -91,6 +92,12 @@ A description of the regression and optimizer functionalities can be found [here
 <a name="distributions"></a>
 ## Distributions
 This part of the library provides probability distributions for statistical evaluation of data.
+<a name="pearson"></a>
+### Pearson-Plot (Under development)
+The Pearson-Plot is a continuous probability distributions.
+This diagram of the Pearson system, showing distributions of types I, III, VI, V, and IV in terms of β1 (squared skewness) and β2 (traditional kurtosis)
+It is useful for deciding which distribution is best for the underlying data.
+![Pearson-Plot](/doc/media/distribution_illustration/pearson_plot.jpg)
 <a name="binomial"></a>
 ### Binomial Distribution
 A library to create and use a Binomial Distribution.

@@ -52,6 +52,18 @@ class PolynomialRegression {
         }
     }
     /*
+    * Get equation string with current coefficients.
+    * Return:
+    * Equation string
+    */
+    getEquationString() {
+        var equation = this.prettyEquation;
+        for(var i=0; i<this.coefficients.length;i++) {
+            equation = equation.replace("c" + [i], this.coefficients[i]);
+        }
+        return equation;
+    }
+    /*
     * Calculate the y-value for the corresponding x-value.
     * Parameter:
     * x: X-Value 

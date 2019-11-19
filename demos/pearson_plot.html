@@ -1,0 +1,37 @@
+<html>
+	<head>
+        <title>Pearson-Plot</title>
+        <meta charset="utf-8"/>
+        <script src="chartjs/Chart.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="chartjs/Chart.min.css">
+
+        <script src="../src/distributions/pearson_plot.js"></script>
+
+        <style>
+            table {margin: 0 auto; background-color: #cccccc; padding: 5px 10px; max-width: 800px;}
+            table input, table select {width: 100%;}
+            table td {padding: 0 10px;}
+            input[type=button] {cursor: pointer;}
+            input:disabled, select:disabled {cursor: no-drop;}
+            canvas {-moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; margin: 0 auto; margin-top: 10px; width: 100%; height: calc(100vh - 70px);}
+        </style>
+        <script>
+            function update() {
+                var canvas = document.getElementById("canvas");
+                var pearsonPlot = new PearsonPlot(canvas);
+                pearsonPlot.plotPearsonChart();
+            };
+            var eventId;
+            window.onresize = function(){
+                clearTimeout(eventId);
+                eventId = setTimeout(update, 100);
+            };
+        </script>
+    </head>
+    <body onload="update();">
+        <table>
+            <tr><td>placeholder</td></tr>
+        </table>
+        <canvas id="canvas"></canvas>      
+    </body>
+</html>
