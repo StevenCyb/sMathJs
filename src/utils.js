@@ -75,6 +75,29 @@ class SMathJsUtils {
         if(! (typeof b == 'boolean')) { throw "'" + b + "' is not a valid boolean."; }
     }
 
+    /* 
+    * Give n random numbers from array.
+    * Parameter:
+    * arr: Array with datapoints
+    * n: Number of random draws
+    * replacement: With or wihtout replacement (default: true(With replacement))
+    * Return:
+    * Sample array with n random datapoints 
+    */
+    static getRandomFromArray(arr, n, replacement=true) {
+        this.isValidNumber(n);
+        if(!Array.isArray(arr)) { throw "'" + arr + "' is not a valid number array."; }
+        var data = [], index = 0;
+        for(var i=0; i<n; i++) {
+            index = Math.floor(Math.random() * arr.length);
+            data.push(arr[index]);
+            if(!replacement) {
+                arr.splice(index, 1);
+            }
+        }
+        return data;
+    }
+
     /*
     * Calculate the faculty of n (!n).
     * Parameter:

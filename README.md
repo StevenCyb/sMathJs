@@ -1,8 +1,7 @@
 # sMathJs - A Small Statistics Library 
 This project was mainly developed for learning purposes, but will also be used in a future planned project. 
-The project isn't finished yet. Currently the following tasks are planned:
+The project isn't finished yet. Currently the following tasks are planned/left:
  - Lib & Demo for Regressions
-    - <del>Polynomial-Regression</del>
     - Logarithmic-Regression
     - Exponential-Regression
     - ab-Exponential-Regression
@@ -11,20 +10,7 @@ The project isn't finished yet. Currently the following tasks are planned:
     - Hyperbolic-Regression
     - Update sub-/main-documentations + Rewrite functions descriptions
 - Lib & Demo Distribution
-    - <del>Binomial Distribution</del>
-    - <del>Z-Distribution / Gaussian Distribution</del>
-    - <del>Central + noncentral T-Student Distribution</del>
-    - <del>F-Distribution</del>
-    - <del>Gamma Distribution</del>
-    - <del>Exponential Distribution</del>
-    - <del>Poisson Distribution</del>
-    - <del>Beta Distribution</del>
-    - <del>Arcsine Distribution</del>
-    - <del>Log-Normal Distribution</del>
-    - <del>Uniform Distribution</del>
-    - <del>Weibull Distribution</del>
-    - <del>Laplace Distribution</del>
-    - <del>Hypergeometric Distribution</del>
+    - Skew Normal Distribution
     - Create sub-/main-documentations with equations and descriptions + Rewrite function descriptions
  
 **If you find a bug or miss an equation, please let me know.**
@@ -95,9 +81,9 @@ This part of the library provides probability distributions for statistical eval
 <a name="pearson"></a>
 ### Pearson-Plot (Under development)
 The Pearson-Plot is a continuous probability distributions.
-This diagram of the Pearson system, showing distributions of types I, III, VI, V, and IV in terms of β1 (squared skewness) and β2 (traditional kurtosis)
+This diagram of the Pearson system, showing distributions of types I, III, VI, V, and IV in terms of β1 (squared skewness) and β2 (traditional kurtosis).
 It is useful for deciding which distribution is best for the underlying data.
-![Pearson-Plot](/doc/media/distribution_illustration/pearson_plot.jpg)
+![Pearson-Plot](/doc/media/distribution_illustration/pearson_plot.gif)
 <a name="binomial"></a>
 ### Binomial Distribution
 A library to create and use a Binomial Distribution.
