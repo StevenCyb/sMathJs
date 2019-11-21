@@ -23,6 +23,7 @@ class PearsonPlot {
         this.dpiRatio = (configAvailable && "dpi_ratio" in config)?parseFloat(config.dpi_ratio):4;
         this.data = (configAvailable && "data" in config)?parseFloat(config.data):null;
         this.bootstrapSamples = (configAvailable && "bootstrap" in config)?parseFloat(config.bootstrap):0;
+        this.method = (configAvailable && "method" in config && config.method == "sample")?"sample":"unbiased";
         // Create a buffer to improve performance on interaction
         this.bufferCanvas = document.createElement('canvas');
         // This attribut change the chart axis eg. h=19 is from 0 to 19-4 (15), w=29 is from 0 to 29-4 (25).
@@ -127,6 +128,7 @@ class PearsonPlot {
             cursor = [(e.clientX - rect.left) * (this.mainCanvas.width / rect.width), 
                       (e.clientY - rect.top) * (this.mainCanvas.height / rect.height)];
         // Restore static background from buffer
+        this.mainCtx.clearRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
         this.mainCtx.drawImage(this.bufferCanvas, 0, 0);
         // Do interactive stuff (comming soon)
         this.drawCircle(this.mainCtx, [cursor[0],cursor[1]], 10, "red");
@@ -260,7 +262,6 @@ class PearsonPlot {
         text(ctx, "(VI)", coordinates([17, 7.2],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.5) + "px Arial");
         text(ctx, "(VII)", coordinates([12.3, 0.07],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.5) + "px Arial");
         //// Draw distribution labels description
-        dataAvailable = true;
         var expandBorder = dataAvailable?1.2:0;
         polygon(ctx, [marginLeft + (cellSize * 3.5), marginTop + (cellSize * 1.5)], [marginLeft + (cellSize * 3.5), marginTop + (cellSize * (4 + expandBorder))], 
                      [marginLeft + (cellSize * 8.5), marginTop + (cellSize * (4 + expandBorder))], [marginLeft + (cellSize * 8.5), marginTop + (cellSize * 1.5)], "#e5e5ec", {"color": "#333333", "width": 3});
@@ -274,6 +275,36 @@ class PearsonPlot {
             circle(ctx, [marginLeft + (cellSize * 8.2), marginTop + (cellSize * 3.85) + (cellSize * 0.6)], cellSize * 0.05, "#fea500");
             circle(ctx, [marginLeft + (cellSize * 8), marginTop + (cellSize * 3.95) + (cellSize * 0.6)], cellSize * 0.05, "#fea500");
             circle(ctx, [marginLeft + (cellSize * 8.1), marginTop + (cellSize * 4.1) + (cellSize * 0.6)], cellSize * 0.05, "#fea500");
+        }
+        //// Plot observation and bootstrapped values
+        if(dataAvailable) {
+            var momentFunction = function(data, k) {
+                    var mean = SMathJsUtils.mean(data), sum = 0.0, n = data.length;
+                    for(var i=0; i<n; i++) {
+                        sum += Math.pow(data[i] - mean, k);
+                    }
+                    return sum / n;
+                },
+                skewnessFunction = null, kurtosisFunction = null;
+            if(this.method == "sample") {
+                skewnessFunction = function(data) {
+                    return momentFunction(data, 3) / Math.pow(Math.sqrt(momentFunction(data, 2)), 3);
+                };
+                kurtosisFunction = function(data) {
+                    return momentFunction(data, 4) / Math.pow(momentFunction(data, 2), 2);
+                };
+            } else { // unbiased estimation (Fisher 1930)
+                skewnessFunction = function(data) {
+                    var n = data.length;
+                    return Math.sqrt(n * (n - 1)) * (momentFunction(data, 3) / Math.pow(Math.sqrt(momentFunction(data, 2)), 3)) / (n - 2);
+                };
+                kurtosisFunction = function(data) {
+                    var n = data.length;
+                    return (n - 1) / ((n - 2) * (n - 3)) * ((n + 1) * (momentFunction(data, 4) / Math.pow(momentFunction(data, 2), 2)) - 3 * (n - 1)) + 3;
+                };
+            }
+            var kurtosis = kurtosisFunction(data), skewness = skewnessFunction(data);
+            circle(ctx, coordinates([kurtosis, skewness],wCells,hCells,cellSize,marginLeft,marginTop), cellSize * 0.2, "#00008b");
         }
         //// Draw buffer- to main-canvas
         this.mainCtx.drawImage(this.bufferCanvas, 0, 0);
