@@ -21,7 +21,7 @@ class PearsonPlot {
         this.mainCanvas = mainCanvas;
         this.mainCtx = mainCanvas.getContext('2d');
         this.dpiRatio = (configAvailable && "dpi_ratio" in config)?parseFloat(config.dpi_ratio):4;
-        this.data = (configAvailable && "data" in config)?parseFloat(config.data):null;
+        this.data = (configAvailable && "data" in config)?config.data:null;
         this.bootstrapSamples = (configAvailable && "bootstrap" in config)?parseFloat(config.bootstrap):0;
         this.method = (configAvailable && "method" in config && config.method == "sample")?"sample":"unbiased";
         // Create a buffer to improve performance on interaction
@@ -140,7 +140,7 @@ class PearsonPlot {
         var canvas = this.bufferCanvas, ctx = canvas.getContext('2d'), hCells = this.hCells, wCells = this.wCells,
            polygon = this.drawPolygon, line = this.line, cicle = this.drawCicle, circle = this.drawCircle, text = this.drawText,
            coordinates = this.coordinates, findMaxCoordinate = this.findMaxCoordinate,
-           dataAvailable = this.data != null; 
+           dataAvailable = (this.data != null && this.data.length > 0); 
         // Change canvas DPI and size
         var rect = this.mainCanvas.getBoundingClientRect();
         this.mainCanvas.width = rect.width * this.dpiRatio;
@@ -242,41 +242,7 @@ class PearsonPlot {
         // Draw legends
         text(ctx, "SKEWNESS (β1)", [marginLeft + cellSize, marginTop + (((hCells / 2) + 4) * cellSize) - cellSize], "bold " + cellSize + "px Arial", -Math.PI/2);
         text(ctx, "KURTOSIS (β2)", [marginLeft + ((wCells / 2) - 2) * cellSize, marginTop + ((hCells + 0.5) * cellSize) - cellSize], "bold " + cellSize + "px Arial");
-        //// Draw distribution labels
-        text(ctx, "U", coordinates([1.6, 0],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.6) + "px Arial");
-        text(ctx, "N", coordinates([2.8, 0],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.6) + "px Arial");
-        text(ctx, "E", coordinates([8.8, 4],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.6) + "px Arial");
-        text(ctx, "L", coordinates([4, 0],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.6) + "px Arial");
-        text(ctx, "t", coordinates([12, 0],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.6) + "px Arial");
-        text(ctx, "impossible", coordinates([3, 8],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.6) + "px Arial");
-        text(ctx, "beta", coordinates([10, 7],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.6) + "px Arial");
-        text(ctx, "beta prime, F", coordinates([15.85, 7.75],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.6) + "px Arial");
-        text(ctx, "gamma", coordinates([11.25, 5.5],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.6) + "px Arial", -0.6);
-        text(ctx, "lognormal", coordinates([14, 5.3],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.6) + "px Arial", -0.4);
-        text(ctx, "inverse gamma", coordinates([16.5, 5.3],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.6) + "px Arial", -0.3);
-        text(ctx, "(I)", coordinates([10.4, 6.5],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.5) + "px Arial");
-        text(ctx, "(II)", coordinates([2.05, 0.07],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.5) + "px Arial");
-        text(ctx, "(III)", coordinates([13, 7],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.5) + "px Arial");
-        text(ctx, "(IV)", coordinates([15, 2],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.5) + "px Arial");
-        text(ctx, "(V)", coordinates([20.8, 6.7],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.5) + "px Arial");
-        text(ctx, "(VI)", coordinates([17, 7.2],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.5) + "px Arial");
-        text(ctx, "(VII)", coordinates([12.3, 0.07],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.5) + "px Arial");
-        //// Draw distribution labels description
-        var expandBorder = dataAvailable?1.2:0;
-        polygon(ctx, [marginLeft + (cellSize * 3.5), marginTop + (cellSize * 1.5)], [marginLeft + (cellSize * 3.5), marginTop + (cellSize * (4 + expandBorder))], 
-                     [marginLeft + (cellSize * 8.5), marginTop + (cellSize * (4 + expandBorder))], [marginLeft + (cellSize * 8.5), marginTop + (cellSize * 1.5)], "#e5e5ec", {"color": "#333333", "width": 3});
-        text(ctx, "U - uniform", [marginLeft + (cellSize * 3.9), marginTop + (cellSize * 1.7) + (cellSize * 0.6)], "bold " + (cellSize * 0.6) + "px Arial");
-        text(ctx, "N - normal", [marginLeft + (cellSize * 3.9), marginTop + (cellSize * 2.3) + (cellSize * 0.6)], "bold " + (cellSize * 0.6) + "px Arial");
-        text(ctx, "E - exponential", [marginLeft + (cellSize * 3.9), marginTop + (cellSize * 2.9) + (cellSize * 0.6)], "bold " + (cellSize * 0.6) + "px Arial");
-        if(dataAvailable) {
-            text(ctx, "Observation", [marginLeft + (cellSize * 3.9), marginTop + (cellSize * 3.5) + (cellSize * 0.6)], "bold " + (cellSize * 0.6) + "px Arial");
-            circle(ctx, [marginLeft + (cellSize * 8), marginTop + (cellSize * 3.35) + (cellSize * 0.6)], cellSize * 0.2, "#00008b");
-            text(ctx, "Bootstrapped", [marginLeft + (cellSize * 3.9), marginTop + (cellSize * 4.1) + (cellSize * 0.6)], "bold " + (cellSize * 0.6) + "px Arial");
-            circle(ctx, [marginLeft + (cellSize * 8.2), marginTop + (cellSize * 3.85) + (cellSize * 0.6)], cellSize * 0.05, "#fea500");
-            circle(ctx, [marginLeft + (cellSize * 8), marginTop + (cellSize * 3.95) + (cellSize * 0.6)], cellSize * 0.05, "#fea500");
-            circle(ctx, [marginLeft + (cellSize * 8.1), marginTop + (cellSize * 4.1) + (cellSize * 0.6)], cellSize * 0.05, "#fea500");
-        }
-        //// Plot observation and bootstrapped values
+        //// Plot observation and bootstrapped values if defined
         if(dataAvailable) {
             var momentFunction = function(data, k) {
                     var mean = SMathJsUtils.mean(data), sum = 0.0, n = data.length;
@@ -303,8 +269,59 @@ class PearsonPlot {
                     return (n - 1) / ((n - 2) * (n - 3)) * ((n + 1) * (momentFunction(data, 4) / Math.pow(momentFunction(data, 2), 2)) - 3 * (n - 1)) + 3;
                 };
             }
-            var kurtosis = kurtosisFunction(data), skewness = skewnessFunction(data);
+            var kurtosis = 0, skewness = 0;
+            if(this.bootstrapSamples != 0 && dataAvailable) {
+                var tmp = SMathJsUtils.arrayToMatrix(SMathJsUtils.getRandomFromArray(data, this.bootstrapSamples * this.data.length), this.data.length, this.bootstrapSamples);
+                for(var c=0; c<this.bootstrapSamples; c++) {
+                    var columnData = [];
+                    for(var r=0; r<tmp.length; r++) {
+                        columnData.push(tmp[r][c]);
+                    }
+                    kurtosis = kurtosisFunction(columnData);
+                    skewness = skewnessFunction(columnData);
+                    circle(ctx, coordinates([kurtosis, skewness],wCells,hCells,cellSize,marginLeft,marginTop), cellSize * 0.05, "#fea500");
+                }
+            } 
+            kurtosis = kurtosisFunction(data);
+            skewness = skewnessFunction(data);
             circle(ctx, coordinates([kurtosis, skewness],wCells,hCells,cellSize,marginLeft,marginTop), cellSize * 0.2, "#00008b");
+        }
+        //// Draw distribution labels
+        text(ctx, "U", coordinates([1.6, 0],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.6) + "px Arial");
+        text(ctx, "N", coordinates([2.8, 0],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.6) + "px Arial");
+        text(ctx, "E", coordinates([8.8, 4],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.6) + "px Arial");
+        text(ctx, "L", coordinates([4, 0],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.6) + "px Arial");
+        text(ctx, "t", coordinates([12, 0],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.6) + "px Arial");
+        text(ctx, "impossible", coordinates([3, 8],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.6) + "px Arial");
+        text(ctx, "beta", coordinates([10, 7],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.6) + "px Arial");
+        text(ctx, "beta prime, F", coordinates([15.85, 7.75],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.6) + "px Arial");
+        text(ctx, "gamma", coordinates([11.25, 5.5],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.6) + "px Arial", -0.6);
+        text(ctx, "lognormal", coordinates([14, 5.3],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.6) + "px Arial", -0.4);
+        text(ctx, "inverse gamma", coordinates([16.5, 5.3],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.6) + "px Arial", -0.3);
+        text(ctx, "(I)", coordinates([10.4, 6.5],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.5) + "px Arial");
+        text(ctx, "(II)", coordinates([2.05, 0.07],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.5) + "px Arial");
+        text(ctx, "(III)", coordinates([13, 7],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.5) + "px Arial");
+        text(ctx, "(IV)", coordinates([15, 2],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.5) + "px Arial");
+        text(ctx, "(V)", coordinates([20.8, 6.7],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.5) + "px Arial");
+        text(ctx, "(VI)", coordinates([17, 7.2],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.5) + "px Arial");
+        text(ctx, "(VII)", coordinates([12.3, 0.07],wCells,hCells,cellSize,marginLeft,marginTop), (cellSize * 0.5) + "px Arial");
+        //// Draw distribution labels description
+        var expandBorderData = dataAvailable?0.6:0;
+        var expandBorderBootstrap = this.bootstrapSamples > 0?0.6:0; 
+        polygon(ctx, [marginLeft + (cellSize * 3.5), marginTop + (cellSize * 1.5)], [marginLeft + (cellSize * 3.5), marginTop + (cellSize * (4 + expandBorderData + expandBorderBootstrap))], 
+                     [marginLeft + (cellSize * 8.5), marginTop + (cellSize * (4 + expandBorderData + expandBorderBootstrap))], [marginLeft + (cellSize * 8.5), marginTop + (cellSize * 1.5)], "#e5e5ec", {"color": "#333333", "width": 3});
+        text(ctx, "U - uniform", [marginLeft + (cellSize * 3.9), marginTop + (cellSize * 1.7) + (cellSize * 0.6)], "bold " + (cellSize * 0.6) + "px Arial");
+        text(ctx, "N - normal", [marginLeft + (cellSize * 3.9), marginTop + (cellSize * 2.3) + (cellSize * 0.6)], "bold " + (cellSize * 0.6) + "px Arial");
+        text(ctx, "E - exponential", [marginLeft + (cellSize * 3.9), marginTop + (cellSize * 2.9) + (cellSize * 0.6)], "bold " + (cellSize * 0.6) + "px Arial");
+        if(dataAvailable) {
+            text(ctx, "Observation", [marginLeft + (cellSize * 3.9), marginTop + (cellSize * 3.5) + (cellSize * 0.6)], "bold " + (cellSize * 0.6) + "px Arial");
+            circle(ctx, [marginLeft + (cellSize * 8), marginTop + (cellSize * 3.35) + (cellSize * 0.6)], cellSize * 0.2, "#00008b");
+        } 
+        if(this.bootstrapSamples > 0) {
+            text(ctx, "Bootstrapped", [marginLeft + (cellSize * 3.9), marginTop + (cellSize * 4.1) + (cellSize * 0.6)], "bold " + (cellSize * 0.6) + "px Arial");
+            circle(ctx, [marginLeft + (cellSize * 8.2), marginTop + (cellSize * 3.85) + (cellSize * 0.6)], cellSize * 0.05, "#fea500");
+            circle(ctx, [marginLeft + (cellSize * 8), marginTop + (cellSize * 3.95) + (cellSize * 0.6)], cellSize * 0.05, "#fea500");
+            circle(ctx, [marginLeft + (cellSize * 8.1), marginTop + (cellSize * 4.1) + (cellSize * 0.6)], cellSize * 0.05, "#fea500");
         }
         //// Draw buffer- to main-canvas
         this.mainCtx.drawImage(this.bufferCanvas, 0, 0);

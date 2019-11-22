@@ -85,8 +85,8 @@ class SMathJsUtils {
     * Sample array with n random datapoints 
     */
     static getRandomFromArray(arr, n, replacement=true) {
-        this.isValidNumber(n);
         if(!Array.isArray(arr)) { throw "'" + arr + "' is not a valid number array."; }
+        this.isValidNumber(n);
         var data = [], index = 0;
         for(var i=0; i<n; i++) {
             index = Math.floor(Math.random() * arr.length);
@@ -96,6 +96,26 @@ class SMathJsUtils {
             }
         }
         return data;
+    }
+
+    /*
+    * Create a matrix out of an array with given rows, columns.
+    * Parameter:
+    * arr: Array for which to generate the modus
+    * rows: Number of rows
+    * columns: Number of columns
+    * Return:
+    * [min, max]
+    */
+    static arrayToMatrix(arr, rows, columns) {
+        if(!Array.isArray(arr)) { throw "'" + arr + "' is not a valid number array."; }
+        this.isValidNumber(rows);
+        this.isValidNumber(columns);
+        var matrix = [];
+        for(var r=0; r<rows; r++) {
+            matrix.push(SMathJsUtils.getRandomFromArray(arr, columns));
+        }
+        return matrix;
     }
 
     /*

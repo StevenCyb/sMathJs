@@ -10,7 +10,6 @@ The project isn't finished yet. Currently the following tasks are planned/left:
     - Hyperbolic-Regression
     - Update sub-/main-documentations + Rewrite functions descriptions
 - Lib & Demo Distribution
-    - Skew Normal Distribution
     - Create sub-/main-documentations with equations and descriptions + Rewrite function descriptions
  
 **If you find a bug or miss an equation, please let me know.**
@@ -84,7 +83,7 @@ The Pearson-Plot is a continuous probability distributions.
 This diagram of the Pearson system, showing distributions of types I, III, VI, V, and IV in terms of β1 (squared skewness) and β2 (traditional kurtosis).
 It is useful for deciding which distribution is best for the underlying data.
 The implementation is based on the publication  
-["fitdistrplus: An R Package for Fitting Distributions"](https://cran.r-project.org/web/packages/fitdistrplus/vignettes/paper2JSS.pdf) and [this StackExchange discussion](https://stats.stackexchange.com/questions/189941/skewness-kurtosis-plot-for-different-distribution).
+["fitdistrplus: An R Package for Fitting Distributions"](https://cran.r-project.org/web/packages/fitdistrplus/vignettes/paper2JSS.pdf) and [this](https://stats.stackexchange.com/questions/189941/skewness-kurtosis-plot-for-different-distribution) StackExchange discussion.
 ![Pearson-Plot](/doc/media/distribution_illustration/pearson_plot.gif)
 <a name="binomial"></a>
 ### Binomial Distribution
