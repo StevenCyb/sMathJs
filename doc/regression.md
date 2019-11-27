@@ -8,52 +8,58 @@ This part of the library offers different regressions in combination with differ
 <a name="regressions"></a>
 ### Regressions
 The regression class `PolynomialRegression` offers the possibility to perform linear (zero-slope), linear, quadratic, cubic and regressions with higher degree (see below).
+Additionally there is the logarithmic regression.
 <p float="middle">
 <table>
 	<tr>
-		<th>Degree</th>
+		<th>Description</th>
 		<th>Instantiation</th>
 		<th>Illustration</th>
 	</tr>
 	<tr>
-		<td>0<br>(Linear-zero-Slope)</td>
+		<td>Degree 0<br>(Linear-zero-Slope)</td>
 		<td>new PolynomialRegression(0);</td>
 		<td><img src="/doc/media/regression_illustration/polynomial_0.jpg" width="100%" /></td>
 	</tr>
 	<tr>
-		<td>1<br>(Linear)</td>
+		<td>Degree 1<br>(Linear)</td>
 		<td>new PolynomialRegression(1);</td>
 		<td><img src="/doc/media/regression_illustration/polynomial_1.jpg" width="100%" /></td>
 	</tr>
 	<tr>
-		<td>2<br>(Quadratic)</td>
+		<td>Degree 2<br>(Quadratic)</td>
 		<td>new PolynomialRegression(2);</td>
 		<td><img src="/doc/media/regression_illustration/polynomial_2.jpg" width="100%" /></td>
 	</tr>
 	<tr>
-		<td>3<br>(Cubic)</td>
+		<td>Degree 3<br>(Cubic)</td>
 		<td>new PolynomialRegression(3);</td>
 		<td><img src="/doc/media/regression_illustration/polynomial_3.jpg" width="100%" /></td>
 	</tr>
 	<tr>
-		<td>4</td>
+		<td>Degree 4</td>
 		<td>new PolynomialRegression(4);</td>
 		<td><img src="/doc/media/regression_illustration/polynomial_4.jpg" width="100%" /></td>
 	</tr>
 	<tr>
-		<td>5</td>
+		<td>Degree 5</td>
 		<td>new PolynomialRegression(5);</td>
 		<td><img src="/doc/media/regression_illustration/polynomial_5.jpg" width="100%" /></td>
 	</tr>
 	<tr>
-		<td>6</td>
+		<td>Degree 6</td>
 		<td>new PolynomialRegression(6);</td>
 		<td><img src="/doc/media/regression_illustration/polynomial_6.jpg" width="100%" /></td>
 	</tr>
 	<tr>
-		<td>7</td>
+		<td>Degree 7</td>
 		<td>new PolynomialRegression(7);</td>
 		<td><img src="/doc/media/regression_illustration/polynomial_7.jpg" width="100%" /></td>
+	</tr>
+	<tr>
+		<td>Logarithmic</td>
+		<td>new LogarithmicRegression();</td>
+		<td><img src="/doc/media/regression_illustration/logarithmic.jpg" width="100%" /></td>
 	</tr>
 </table>
 </p>

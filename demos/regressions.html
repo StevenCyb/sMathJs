@@ -7,7 +7,8 @@
 
         <script src="../src/utils.js"></script>
         <script src="../src/regression/optimizer.js"></script>
-        <script src="../src/regression/regression.js"></script>
+        <script src="../src/regression/polynomial_regression.js"></script>
+        <script src="../src/regression/logarithmic_regression.js"></script>
         <style>
             table {margin: 0 auto; background-color: #cccccc; padding: 5px 10px; }
             table input, table select {width: 100%;}
@@ -92,15 +93,21 @@
             }
             function solveRegression() {
                 interactionMode(false);
-                degreeOption = parseInt(document.getElementById("degree-option").value);
-                worker = new PolynomialRegression(degreeOption);
+                regressionOption = document.getElementById("regression-option").value;
+                if(regressionOption.startsWith("polynomial-")) {
+                    worker = new PolynomialRegression(parseFloat(regressionOption.replace("polynomial-", "")));
+                } else if(regressionOption.startsWith("logarithmic")) {
+                        worker = new LogarithmicRegression();
+                } else {
+                    alert("Regression \"" + regressionOption + "\" unknown.");
+                }
                 worker.bestFit(fittingData);
                 drawCharts();
                 interactionMode(true);
             }
             function toggleFitting(trainToggleButton) {
                 if(trainToggleButton.value == "Train") {
-                    degreeOption = parseInt(document.getElementById("degree-option").value);
+                    regressionOption = document.getElementById("regression-option").value;
                     selectedOptimizer = document.getElementById("optimizer-option").value;
                     selectedGradientDescentVariants = document.getElementById("gradient-descent-variant").value;
                     learningRate = parseFloat(document.getElementById("learning-rate").value);
@@ -149,7 +156,13 @@
                             optimizer = new NadamOptimizer(learningRate, beta1, beta2);
                             break;
                     }
-                    worker = new PolynomialRegression(degreeOption, optimizer);
+                    if(regressionOption.startsWith("polynomial-")) {
+                        worker = new PolynomialRegression(parseFloat(regressionOption.replace("polynomial-", "")), optimizer);
+                    } else if(regressionOption.startsWith("logarithmic")) {
+                        worker = new LogarithmicRegression(optimizer);
+                    } else {
+                        alert("Regression \"" + regressionOption + "\" unknown.");
+                    }
                     trainToggleButton.value = "Stop";
                     interactionMode(false);
                     trainToggleButton.disabled = false;
@@ -193,7 +206,8 @@
                 try {
                     worker.train(trainData);
                 } catch(e) {
-                    alert("Training failed - Try to use a smaller learning rate." + e);
+                    alert("Training failed - Try to use a smaller learning rate.");
+                    //console.log(e);
                     stopLoop = true;
                 }
                 drawCharts();
@@ -279,17 +293,18 @@
     <body onload="generateRandomData(); updateOptionView();">
         <table>
             <tr>
-                <td>Degree:</td>
+                <td>Regression:</td>
                 <td colspan="2">
-                    <select id ="degree-option">
-                        <option selected value="0">Polynomial 0-Degree (Zero-Slope-Linear)</option>
-                        <option value="1">Polynomial 1-Degree (Linear)</option>
-                        <option value="2">Polynomial 2-Degree (Quadratic)</option>
-                        <option value="3">Polynomial 3-Degree (Cubic)</option>
-                        <option value="4">Polynomial 4-Degree</option>
-                        <option value="5">Polynomial 5-Degree</option>
-                        <option value="6">Polynomial 6-Degree</option>
-                        <option value="7">Polynomial 7-Degree</option>
+                    <select id ="regression-option">
+                        <option selected value="polynomial-0">Polynomial 0-Degree (Zero-Slope-Linear)</option>
+                        <option value="polynomial-1">Polynomial 1-Degree (Linear)</option>
+                        <option value="polynomial-2">Polynomial 2-Degree (Quadratic)</option>
+                        <option value="polynomial-3">Polynomial 3-Degree (Cubic)</option>
+                        <option value="polynomial-4">Polynomial 4-Degree</option>
+                        <option value="polynomial-5">Polynomial 5-Degree</option>
+                        <option value="polynomial-6">Polynomial 6-Degree</option>
+                        <option value="polynomial-7">Polynomial 7-Degree</option>
+                        <option value="logarithmic">Logarithmic</option>
                     </select>
                 </td>
                <td id="optimizer-options" rowspan="5">

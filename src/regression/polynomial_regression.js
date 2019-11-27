@@ -17,9 +17,9 @@ class PolynomialRegression {
         this.degree = degree;
         this.coefficients = Array(degree + 1).fill(1.0);
         this.prettyEquation = "c" + degree;
-        this.gradientFunctions = Array(degree + 1).fill("");
+        this.gradientEquation = Array(degree + 1).fill("");
         this.equation = "this.coefficients[" + degree + "]";
-        this.gradientFunctions[degree] = "this.coefficients[" + degree + "] * x0";
+        this.gradientEquation[degree] = "this.coefficients[" + degree + "] * x0";
         this.optimizers = [];
         if(optimizer != null) {
             this.optimizers.push(optimizer.clone());
@@ -31,22 +31,22 @@ class PolynomialRegression {
             if(i != degree) {
                 this.equation = "this.coefficients[" + (i - 1) + "] * Math.pow(x, " + (degree - i + 1) + ") + " + this.equation;
                 this.prettyEquation = "c" + (i - 1) + " * x^" + (degree - i + 1) + " + " + this.prettyEquation;
-                this.gradientFunctions[degree] = "this.coefficients[" + (i - 1) + "] * x" + (degree - i + 1) + " + " + this.gradientFunctions[degree];
+                this.gradientEquation[degree] = "this.coefficients[" + (i - 1) + "] * x" + (degree - i + 1) + " + " + this.gradientEquation[degree];
             } else {
                 this.equation = "this.coefficients[" + (degree - 1) + "] * x + " + this.equation;
                 this.prettyEquation = "c" + (degree - 1) + " * x + " + this.prettyEquation;
-                this.gradientFunctions[degree] = "this.coefficients[" + (degree - 1) + "] * x1 + " + this.gradientFunctions[degree];
+                this.gradientEquation[degree] = "this.coefficients[" + (degree - 1) + "] * x1 + " + this.gradientEquation[degree];
             }
         }
         for(var i=0; i<=degree; i++) {
-            this.gradientFunctions[i] = this.gradientFunctions[degree];
+            this.gradientEquation[i] = this.gradientEquation[degree];
             for(var j=0; j<=degree; j++) {
                 if((j + degree - i) <= 0) {
-                    this.gradientFunctions[i] = this.gradientFunctions[i].replace(" * x" + j, "");
+                    this.gradientEquation[i] = this.gradientEquation[i].replace(" * x" + j, "");
                 } else if((j + degree - i) == 1) {
-                    this.gradientFunctions[i] = this.gradientFunctions[i].replace("x" + j, "x");
+                    this.gradientEquation[i] = this.gradientEquation[i].replace("x" + j, "x");
                 } else {
-                    this.gradientFunctions[i] = this.gradientFunctions[i].replace("x" + j, "Math.pow(x, " + (j + degree - i) + ")");
+                    this.gradientEquation[i] = this.gradientEquation[i].replace("x" + j, "Math.pow(x, " + (j + degree - i) + ")");
                 }
             }
         }
@@ -82,6 +82,7 @@ class PolynomialRegression {
     * Summed MSE
     */
     summedMeanSquaredError(data=[]) { 
+        SMathJsUtils.isValidNdTupleArray(data, 2);
         var totalError = 0.0, n = data.length;
         for(var i=0; i<n; i++) {
             totalError += Math.pow(data[i][1] - this.predict(data[i][0]), 2);
@@ -100,12 +101,12 @@ class PolynomialRegression {
         var gradients = Array(this.degree + 1).fill(0), n = data.length.toFixed(1);
         for(var i=0; i<n; i++) {
             var x= data[i][0]; // Needed in eval
-            gradients[this.degree] += (1.0 / n) * (eval(this.gradientFunctions[this.degree]) - data[i][1]);
+            gradients[this.degree] += (1.0 / n) * (eval(this.gradientEquation[this.degree]) - data[i][1]);
             for(var j=this.degree; j>=1; j--) {
                 if(j != this.degree) {
-                    gradients[j - 1] += (1.0 / n) * (eval(this.gradientFunctions[j - 1]) - (data[i][1] *  Math.pow(data[i][0], this.degree - j + 1)));
+                    gradients[j - 1] += (1.0 / n) * (eval(this.gradientEquation[j - 1]) - (data[i][1] *  Math.pow(data[i][0], this.degree - j + 1)));
                 } else {
-                    gradients[(j - 1)] += (1.0 / n) * (eval(this.gradientFunctions[j - 1]) - (data[i][1] * data[i][0]));
+                    gradients[(j - 1)] += (1.0 / n) * (eval(this.gradientEquation[j - 1]) - (data[i][1] * data[i][0]));
                 }
             }
         }
@@ -154,6 +155,11 @@ class PolynomialRegression {
             this.coefficients[i] = this.optimizers[i].optimize(this.iteration, this.coefficients[i], gradients[i]);
         }
         this.iteration += 1;
+        for(var i=0; i<this.coefficients.length; i++) {
+            if(Math.abs(this.coefficients[i]) == Infinity) {
+                throw "Coefficients reach infinity.";
+            }
+        }
         return this.summedMeanSquaredError(data);
     }
     /*
@@ -165,7 +171,7 @@ class PolynomialRegression {
     */
     bestFit(data) {
         SMathJsUtils.isValidNdTupleArray(data, 2);
-        var n=data.length.toFixed(1);
+        var n = data.length.toFixed(1);
         if(this.degree == 0) {
             var cons=0.0;
             for(var i=0; i<data.length; i++) {
@@ -184,7 +190,7 @@ class PolynomialRegression {
             b = (Sy * Sx_2 - Sx * Sxy) / (n * Sx_2 - Math.pow(Sx, 2));
             this.coefficients = [m, b];
         } else if(this.degree == 2) {
-            var c0, c1, c2, Sx=0.0, Sx_2=0.0, Sx_3=0.0, Sx_4=0.0, Sy=0.0, Sxx=0.0, Sxy=0.0, Sxx_2=0.0, Sx_2y=0.0, Sx_2x_2=0.0;
+            var c0, c1, c2, Sx = 0.0, Sx_2 = 0.0, Sx_3 = 0.0, Sx_4 = 0.0, Sy = 0.0, Sxx = 0.0, Sxy = 0.0, Sxx_2 = 0.0, Sx_2y = 0.0, Sx_2x_2 = 0.0;
             for(var i=0; i<n; i++) {
                 Sx += data[i][0];
                 Sy += data[i][1];

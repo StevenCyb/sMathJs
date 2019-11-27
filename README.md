@@ -2,11 +2,9 @@
 This project was mainly developed for learning purposes, but will also be used in a future planned project. 
 The project isn't finished yet. Currently the following tasks are planned/left:
  - Lib & Demo for Regressions
-    - Logarithmic-Regression
     - Exponential-Regression
     - ab-Exponential-Regression
     - Power-Regression
-    - Logarithmic-Regression
     - Hyperbolic-Regression
     - Update sub-/main-documentations + Rewrite functions descriptions
 - Lib & Demo Distribution
@@ -60,7 +58,8 @@ For data fitting `utils`, `optimizer` and `regression`.
 ```
 <script src="src/utils.js"></script>
 <script src="src/regression/optimizer.js"></script>
-<script src="src/regression/regression.js"></script>
+<script src="src/regression/polynomial_regression.js"></script>
+<script src="src/regression/logarithmic_regression.js"></script>
 ```
 <a name="utils"></a>
 ## Utils
@@ -68,6 +67,7 @@ The utils script contains functions that are used multiple times in different di
 <a name="regression"></a>
 ## Regression
 This part of the library offers some regressions in combination with different optimizers or with a best fit calculation.
+Currently, this includes polynomial and logarithmic regression.
 A description of the regression and optimizer functionalities can be found [here](/doc/regression.md).
 <p float="middle">
   <img src="/doc/media/regression_illustration/regression_linear.gif" width="48%" />
