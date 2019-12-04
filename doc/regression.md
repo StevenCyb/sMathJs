@@ -66,6 +66,11 @@ Additionally there is the logarithmic regression.
 		<td>new AbExponentialRegression();</td>
 		<td><img src="/doc/media/regression_illustration/ab_exponential_regression.jpg" width="100%" /></td>
 	</tr>
+	<tr>
+		<td>E-Exponential</td>
+		<td>new EExponentialRegression();</td>
+		<td><img src="/doc/media/regression_illustration/e_exponential_regression.jpg" width="100%" /></td>
+	</tr>
 </table>
 </p>
 

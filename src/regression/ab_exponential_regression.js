@@ -62,8 +62,8 @@ class AbExponentialRegression {
         SMathJsUtils.isValidNdTupleArray(data, 2);
         var gradients = Array(2).fill(0), n = data.length.toFixed(1);
         for(var i=0; i<n; i++) {
-            gradients[0] += (1.0 / n) * (data[i][1] - (this.coefficients[0] * Math.pow(this.coefficients[1], data[i][0])));
-            gradients[1] += (1.0 / n) * data[i][0] * (data[i][1] - (this.coefficients[0] * Math.pow(this.coefficients[1], data[i][0])));
+            gradients[0] += (1.0 / n) * Math.max(1 / data[i][0], 1) * (data[i][1] - this.predict(data[i][0]));
+            gradients[1] += (1.0 / n) * Math.max(1 - (1 / data[i][0]), 0) * (data[i][1] - this.predict(data[i][0]));
         }
         // Invert the gradient value
         gradients[0] *= -1;

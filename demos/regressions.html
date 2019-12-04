@@ -11,6 +11,7 @@
         <script src="../src/regression/polynomial_regression.js"></script>
         <script src="../src/regression/logarithmic_regression.js"></script>
         <script src="../src/regression/ab_exponential_regression.js"></script>
+        <script src="../src/regression/e_exponential_regression.js"></script>
         <style>
             table {margin: 0 auto; background-color: #cccccc; padding: 5px 10px; }
             table input, table select {width: 100%;}
@@ -99,9 +100,11 @@
                 if(regressionOption.startsWith("polynomial-")) {
                     worker = new PolynomialRegression(parseFloat(regressionOption.replace("polynomial-", "")));
                 } else if(regressionOption.startsWith("logarithmic")) {
-                        worker = new LogarithmicRegression();
+                    worker = new LogarithmicRegression();
                 } else if(regressionOption.startsWith("ab_exponential")) {
-                        worker = new AbExponentialRegression();
+                    worker = new AbExponentialRegression();
+                } else if(regressionOption.startsWith("e_exponential")) {
+                    worker = new EExponentialRegression();
                 } else {
                     alert("Regression \"" + regressionOption + "\" unknown.");
                 }
@@ -166,6 +169,8 @@
                         worker = new LogarithmicRegression(optimizer);
                     } else if(regressionOption.startsWith("ab_exponential")) {
                         worker = new AbExponentialRegression(optimizer);
+                    } else if(regressionOption.startsWith("e_exponential")) {
+                        worker = new EExponentialRegression(optimizer);
                     } else {
                         alert("Regression \"" + regressionOption + "\" unknown.");
                     }
@@ -312,6 +317,7 @@
                         <option value="polynomial-7">Polynomial 7-Degree</option>
                         <option value="logarithmic">Logarithmic</option>
                         <option value="ab_exponential">AB-Exponential</option>
+                        <option value="e_exponential">E-Exponential</option>
                     </select>
                 </td>
                <td id="optimizer-options" rowspan="5">

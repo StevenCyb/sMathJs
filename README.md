@@ -2,7 +2,6 @@
 This project was mainly developed for learning purposes, but will also be used in a future planned project. 
 The project isn't finished yet. Currently the following tasks are planned/left:
  - Lib & Demo for Regressions
-    - E-Exponential regression
     - Inverse-Regression
     - Power-Regression
     - Hyperbolic-Regression
@@ -61,6 +60,7 @@ For data fitting `utils`, `optimizer` and `regression`.
 <script src="src/regression/polynomial_regression.js"></script>
 <script src="src/regression/logarithmic_regression.js"></script>
 <script src="src/regression/ab_exponential_regression.js"></script>
+<script src="src/regression/e_exponential_regression.js"></script>
 ```
 <a name="utils"></a>
 ## Utils
