@@ -2,6 +2,7 @@
 	<head>
         <title>Demo - Regressions</title>
         <meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="chartjs/Chart.min.js"></script>
         <link rel="stylesheet" type="text/css" href="chartjs/Chart.min.css">
 
@@ -9,6 +10,7 @@
         <script src="../src/regression/optimizer.js"></script>
         <script src="../src/regression/polynomial_regression.js"></script>
         <script src="../src/regression/logarithmic_regression.js"></script>
+        <script src="../src/regression/ab_exponential_regression.js"></script>
         <style>
             table {margin: 0 auto; background-color: #cccccc; padding: 5px 10px; }
             table input, table select {width: 100%;}
@@ -98,6 +100,8 @@
                     worker = new PolynomialRegression(parseFloat(regressionOption.replace("polynomial-", "")));
                 } else if(regressionOption.startsWith("logarithmic")) {
                         worker = new LogarithmicRegression();
+                } else if(regressionOption.startsWith("ab_exponential")) {
+                        worker = new AbExponentialRegression();
                 } else {
                     alert("Regression \"" + regressionOption + "\" unknown.");
                 }
@@ -160,6 +164,8 @@
                         worker = new PolynomialRegression(parseFloat(regressionOption.replace("polynomial-", "")), optimizer);
                     } else if(regressionOption.startsWith("logarithmic")) {
                         worker = new LogarithmicRegression(optimizer);
+                    } else if(regressionOption.startsWith("ab_exponential")) {
+                        worker = new AbExponentialRegression(optimizer);
                     } else {
                         alert("Regression \"" + regressionOption + "\" unknown.");
                     }
@@ -305,6 +311,7 @@
                         <option value="polynomial-6">Polynomial 6-Degree</option>
                         <option value="polynomial-7">Polynomial 7-Degree</option>
                         <option value="logarithmic">Logarithmic</option>
+                        <option value="ab_exponential">AB-Exponential</option>
                     </select>
                 </td>
                <td id="optimizer-options" rowspan="5">

@@ -173,7 +173,7 @@ class PolynomialRegression {
         SMathJsUtils.isValidNdTupleArray(data, 2);
         var n = data.length.toFixed(1);
         if(this.degree == 0) {
-            var cons=0.0;
+            var cons = 0.0;
             for(var i=0; i<data.length; i++) {
                 cons += (1 / n) * data[i][1];
             }
@@ -290,5 +290,72 @@ class PolynomialRegression {
                 this.coefficients.push(matrix[i][columnCount - 1]);
             }
         }
-    } 
+    }
+    /*
+    * Calculate the correlation coefficient to the given data points from best fit.
+    * Parameter:
+    * data: Data in format [[x_1,y_1],[x_2,y_2],...] 
+    * Return:
+    * Correlation coefficient (r) where...
+    * 0.7<|r|<=1  -> Strong correlation
+    * 0.4<|r|<0.7 -> Moderate correlation
+    * 0.2<|r|<0.4 -> Weak correlation
+    *  0<=|r|<0.2 -> No correlation
+    */
+    correlationCoefficient(data) {
+        SMathJsUtils.isValidNdTupleArray(data, 2);
+        if(this.degree == 1) {
+            var n = data.length, xMean = 0.0, yMean = 0.0, Sxx = 0.0, Syy = 0.0, Sxy = 0.0;
+            for(var i=0; i<n; i++) {
+                xMean += (1.0 / n) * data[i][0];
+                yMean += (1.0 / n) * data[i][1];
+            }
+            for(var i=0; i<n; i++) {
+                Sxx += Math.pow(data[i][0] - xMean, 2);
+                Syy += Math.pow(data[i][1] - yMean, 2);
+                Sxy += (data[i][0] - xMean) * (data[i][1] - yMean);
+            }
+            return Sxy / (Math.sqrt(Sxx) * Math.sqrt(Syy)); 
+        } else {
+            var yMean = 0.0, SyMean2 = 0.0, Sequation = 0.0, coefficientsHolder = this.coefficients;
+            this.bestFit(data);
+            for(var i=0; i<n; i++) {
+                yMean += (1.0 / n) * data[i][1];
+            }
+            for(var i=0; i<n; i++) {
+                SyMean2 += Math.pow(data[i][1] - yMean, 2)
+                Sequation += Math.pow(data[i][1] - this.predict(data[i][0]), 2);
+            }
+            this.coefficients = coefficientsHolder;
+            return Math.sqrt(1 - (Sequation / SyMean2));
+        }
+        /*
+        else if(this.degree == 2) {
+            var n = data.length, xMean = 0.0, yMean = 0.0, x2Mean = 0.0,
+                Sxx = 0.0, Sxy = 0.0, Sxx2 = 0.0, Sx2x2 = 0.0, Sx2y = 0.0,
+                SyMean2 = 0.0, SyABxCx22 = 0.0,
+                a = 0.0, b = 0.0, c = 0.0;
+            for(var i=0; i<n; i++) {
+                xMean += (1.0 / n) * data[i][0];
+                x2Mean += (1.0 / n) * Math.pow(data[i][0], 2);
+                yMean += (1.0 / n) * data[i][1];
+            }
+            for(var i=0; i<n; i++) {
+                Sxx += Math.pow(data[i][0] - xMean, 2);
+                Sxy += (data[i][0] - xMean) * (data[i][1] - yMean);
+                Sxx2 += (data[i][0] - xMean) * (Math.pow(data[i][0], 2) - x2Mean);
+                Sx2x2 += Math.pow(Math.pow(data[i][0], 2) - x2Mean, 2);
+                Sx2y += (Math.pow(data[i][0], 2) - x2Mean) * (data[i][1] - yMean);
+                SyMean2 += Math.pow(data[i][1] - yMean, 2)
+            }
+            b = (Sxy * Sx2x2 - Sx2y * Sxx2) / (Sxx * Sx2x2 - Math.pow(Sxx2, 2));
+            c = (Sx2y * Sxx - Sxy * Sxx2) / (Sxx * Sx2x2 - Math.pow(Sxx2, 2));
+            a = yMean - b * xMean - c * x2Mean;
+            for(var i=0; i<n; i++) {
+                SyABxCx22 += Math.pow(data[i][1] - (a + b * data[i][0] + c * Math.pow(data[i][0], 2)), 2);
+            }
+            return Math.sqrt(1 - (SyABxCx22 / SyMean2));
+        }
+        */
+    }
 }

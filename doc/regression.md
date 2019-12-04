@@ -61,6 +61,11 @@ Additionally there is the logarithmic regression.
 		<td>new LogarithmicRegression();</td>
 		<td><img src="/doc/media/regression_illustration/logarithmic.jpg" width="100%" /></td>
 	</tr>
+	<tr>
+		<td>AB-Exponential</td>
+		<td>new AbExponentialRegression();</td>
+		<td><img src="/doc/media/regression_illustration/ab_exponential_regression.jpg" width="100%" /></td>
+	</tr>
 </table>
 </p>
 
@@ -76,6 +81,17 @@ Create a class as follow.
 * optimizer: Optimizer to train (optional)
 */
 var obj = new PolynomialRegression(degree, optimizery);
+```
+#### Get Equation
+Get equation string with current coefficients.
+```
+/*
+* Parameter:
+* void
+* Return:
+* Equation string
+*/
+regressionObj.getEquationString();
 ```
 #### Predict
 Calculate the y-value for the corresponding x-value.
@@ -143,6 +159,21 @@ Calculate the best fit to the given data points.
 * Nothing, but set the coefficients
 */
 regressionObj.bestFit(data);
+```
+#### Correlation Coefficient (r)
+Calculate the correlation coefficient to the given data points from best fit.
+```
+/*
+* Parameter:
+* data: Data in format [[x_1,y_1],[x_2,y_2],...] 
+* Return:
+* Correlation coefficient (r) where...
+* 0.7<|r|<=1  -> Strong correlation
+* 0.4<|r|<0.7 -> Moderate correlation
+* 0.2<|r|<0.4 -> Weak correlation
+*  0<=|r|<0.2 -> No correlation
+*/
+regressionObj.correlationCoefficient(data);
 ```
 <a name="optimizers"></a>
 ### Optimizers

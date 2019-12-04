@@ -1,7 +1,4 @@
-/*
- * Class providing a logarithmic regression
- */
-class LogarithmicRegression {
+class AbExponentialRegression {
     /*
     * Constructor of this class.
     * Parameter:
@@ -26,7 +23,7 @@ class LogarithmicRegression {
         for(var i=0; i<this.coefficients.length;i++) {
             equation = equation.replace("c" + [i], this.coefficients[i]);
         }
-        return this.coefficients[0] + " + (" + this.coefficients[1] + ") * ln(x)";
+        return this.coefficients[0] + " * " + this.coefficients[1] + "^(x)";
     }
     /*
     * Calculate the y-value for the corresponding x-value.
@@ -37,7 +34,7 @@ class LogarithmicRegression {
     */
     predict(x) {
         SMathJsUtils.isValidNumber(x);
-        return this.coefficients[0] + this.coefficients[1] * Math.log(x);
+        return this.coefficients[0] * Math.pow(this.coefficients[1], x);
     }
     /*
     * Calculates the summed mean square error (MSE) loss.
@@ -59,15 +56,14 @@ class LogarithmicRegression {
     * Parameter:
     * data: Data in format [[x_1,y_1],[x_2,y_2],...] 
     * Return:
-    * Gradients [c0, c1] => [a, b]
+    * Gradients [c0, c1] => [A, B]
     */
     gradient(data=[]) {
         SMathJsUtils.isValidNdTupleArray(data, 2);
         var gradients = Array(2).fill(0), n = data.length.toFixed(1);
         for(var i=0; i<n; i++) {
-            var x= data[i][0]; // Needed in eval
-            gradients[0] += (1.0 / n) * (data[i][1] - (this.coefficients[0] + this.coefficients[1] * Math.log(data[i][0])));
-            gradients[1] += (1.0 / n) * (data[i][1] - (this.coefficients[0] + this.coefficients[1] * Math.log(data[i][0])));
+            gradients[0] += (1.0 / n) * (data[i][1] - (this.coefficients[0] * Math.pow(this.coefficients[1], data[i][0])));
+            gradients[1] += (1.0 / n) * data[i][0] * (data[i][1] - (this.coefficients[0] * Math.pow(this.coefficients[1], data[i][0])));
         }
         // Invert the gradient value
         gradients[0] *= -1;
@@ -80,7 +76,7 @@ class LogarithmicRegression {
     * data: Data in format [[x_1,y_1],[x_2,y_2],...] 
     * coefficients: Coefficients to use [c0, c1] => [a, b]
     * Return:
-    * Gradients [c0, c1] => [a, b]
+    * Gradients [c0, c1] => [A, B]
     */
     gradientWithGiven(data=[], coefficients=[]) {
         SMathJsUtils.isValidNdTupleArray(data, 2);
@@ -129,17 +125,17 @@ class LogarithmicRegression {
     */
     bestFit(data) {
         SMathJsUtils.isValidNdTupleArray(data, 2);
-        var n = data.length, lnxMean = 0.0, yMean = 0.0, Sxx = 0.0, Sxy = 0.0;
+        var n = data.length, lnyMean = 0.0, xMean = 0.0, Sxx = 0.0, Sxy = 0.0;
         for(var i=0; i<n; i++) {
-            lnxMean += (1.0 / n) * Math.log(data[i][0]);
-            yMean += (1.0 / n) * data[i][1];
+            lnyMean += (1.0 / n) * Math.log(data[i][1]);
+            xMean += (1.0 / n) * data[i][0];
         }
         for(var i=0; i<n; i++) {
-            Sxx += Math.pow(Math.log(data[i][0]) - lnxMean, 2);
-            Sxy += (Math.log(data[i][0]) - lnxMean) * (data[i][1] - yMean);
+            Sxx += Math.pow(data[i][0] - xMean, 2);
+            Sxy += (data[i][0] - xMean) * (Math.log(data[i][1]) - lnyMean);
         }
-        this.coefficients[1] = Sxy / Sxx;
-        this.coefficients[0]  = yMean - this.coefficients[1]  * lnxMean;
+        this.coefficients[1] = Math.exp(Sxy / Sxx);
+        this.coefficients[0] = Math.exp(lnyMean - xMean * Math.log(this.coefficients[1]));
     }
     /*
     * Calculate the correlation coefficient to the given data points from best fit.
@@ -154,15 +150,15 @@ class LogarithmicRegression {
     */
     correlationCoefficient(data) {
         SMathJsUtils.isValidNdTupleArray(data, 2);
-        var n = data.length, lnxMean = 0.0, yMean = 0.0, Sxx = 0.0, Syy = 0.0, Sxy = 0.0;
+        var n = data.length, lnyMean = 0.0, xMean = 0.0, Sxx = 0.0, Syy = 0.0, Sxy = 0.0;
         for(var i=0; i<n; i++) {
-            lnxMean += (1.0 / n) * Math.log(data[i][0]);
-            yMean += (1.0 / n) * data[i][1];
+            lnyMean += (1.0 / n) * Math.log(data[i][1]);
+            xMean += (1.0 / n) * data[i][0];
         }
         for(var i=0; i<n; i++) {
-            Sxx += Math.pow(Math.log(data[i][0]) - lnxMean, 2);
-            Syy += Math.pow(data[i][1] - yMean, 2)
-            Sxy += (Math.log(data[i][0]) - lnxMean) * (data[i][1] - yMean);
+            Sxx += Math.pow(data[i][0] - xMean, 2);
+            Syy += Math.pow(Math.log(data[i][1]) - lnyMean, 2);
+            Sxy += (data[i][0] - xMean) * (Math.log(data[i][1]) - lnyMean);
         }
         return Sxy / (Math.sqrt(Sxx) * Math.sqrt(Syy));
     }
