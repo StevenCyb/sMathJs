@@ -19,10 +19,6 @@ class AbExponentialRegression {
     * Equation string
     */
     getEquationString() {
-        var equation = this.prettyEquation;
-        for(var i=0; i<this.coefficients.length;i++) {
-            equation = equation.replace("c" + [i], this.coefficients[i]);
-        }
         return this.coefficients[0] + " * " + this.coefficients[1] + "^(x)";
     }
     /*

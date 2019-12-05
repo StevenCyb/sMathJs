@@ -1,12 +1,12 @@
-class EExponentialRegression {
+class InverseRegression {
     /*
     * Constructor of this class.
     * Parameter:
     * optimizer: Optimizer to train (optional)
     */
-   constructor(optimizer=null) {
+    constructor(optimizer=null) {
         this.iteration = 0;
-        this.coefficients = Array(2).fill(0.0);
+        this.coefficients = Array(2).fill(1.0);
         this.optimizers = [];
         if(optimizer != null) {
             this.optimizers.push(optimizer.clone());
@@ -19,7 +19,7 @@ class EExponentialRegression {
     * Equation string
     */
     getEquationString() {
-        return this.coefficients[0] + " * e^(" + this.coefficients[1] + " * x)";
+        return this.coefficients[0] + " + (" + this.coefficients[1] + " / x)";
     }
     /*
     * Calculate the y-value for the corresponding x-value.
@@ -30,7 +30,7 @@ class EExponentialRegression {
     */
     predict(x) {
         SMathJsUtils.isValidNumber(x);
-        return this.coefficients[0] * Math.pow(Math.E, this.coefficients[1] * x);
+        return this.coefficients[0] + (this.coefficients[1] / x);
     }
     /*
     * Calculates the summed mean square error (MSE) loss.
@@ -58,8 +58,8 @@ class EExponentialRegression {
         SMathJsUtils.isValidNdTupleArray(data, 2);
         var gradients = Array(2).fill(0), n = data.length.toFixed(1);
         for(var i=0; i<n; i++) {
-            gradients[0] += (1.0 / n) * Math.max(1 / data[i][0], 0) * (data[i][1] - this.predict(data[i][0]));
-            gradients[1] += (1.0 / n) * Math.max(1 - (1 / data[i][0]), 1) * (data[i][1] - this.predict(data[i][0]));
+            gradients[0] += (1.0 / n) * Math.max(1 / data[i][0], 1) * (data[i][1] - this.predict(data[i][0]));
+            gradients[1] += (1.0 / n) * Math.max(1 - (1 / data[i][0]), 0) * (data[i][1] - this.predict(data[i][0]));
         }
         // Invert the gradient value
         gradients[0] *= -1;
@@ -95,14 +95,14 @@ class EExponentialRegression {
         }
         SMathJsUtils.isValidNdTupleArray(data, 2);
         var gradients = Array(2).fill(1.0);
-        try {
+		try {
             SMathJsUtils.isValidFunction(this.optimizers[0].gradientPreCalculation);
             var coefficients = Array(2).fill(1.0);
             coefficients[0] = this.optimizers[0].gradientPreCalculation(this.coefficients[0]);
             coefficients[1] = this.optimizers[1].gradientPreCalculation(this.coefficients[1]);
             gradients = this.gradientWithGiven(data, coefficients);
-        } catch(err) {
-            gradients = this.gradient(data);
+		} catch(err) {
+			gradients = this.gradient(data);
         }
         this.coefficients[0] = this.optimizers[0].optimize(this.iteration, this.coefficients[0], gradients[0]);
         this.coefficients[1] = this.optimizers[1].optimize(this.iteration, this.coefficients[1], gradients[1]);
@@ -121,17 +121,17 @@ class EExponentialRegression {
     */
     bestFit(data) {
         SMathJsUtils.isValidNdTupleArray(data, 2);
-        var n = data.length, lnyMean = 0.0, xMean = 0.0, Sxx = 0.0, Sxy = 0.0;
+        var n = data.length, x_1Mean = 0.0, yMean = 0.0, Sxx = 0.0, Sxy = 0.0;
         for(var i=0; i<n; i++) {
-            lnyMean += (1.0 / n) * Math.log(data[i][1]);
-            xMean += (1.0 / n) * data[i][0];
+            x_1Mean += (1.0 / n) * Math.pow(data[i][0], -1);
+            yMean += (1.0 / n) * data[i][1];
         }
         for(var i=0; i<n; i++) {
-            Sxx += Math.pow(data[i][0] - xMean, 2);
-            Sxy += (data[i][0] - xMean) * (Math.log(data[i][1]) - lnyMean);
+            Sxx += Math.pow(Math.pow(data[i][0], -1) - x_1Mean, 2);
+            Sxy += (Math.pow(data[i][0], -1) - x_1Mean) * (data[i][1] - yMean);
         }
         this.coefficients[1] = Sxy / Sxx;
-        this.coefficients[0] = Math.exp(lnyMean - this.coefficients[1] * xMean);
+        this.coefficients[0] = yMean - this.coefficients[1] * x_1Mean;
     }
     /*
     * Calculate the correlation coefficient to the given data points from best fit.
@@ -146,15 +146,15 @@ class EExponentialRegression {
     */
     correlationCoefficient(data) {
         SMathJsUtils.isValidNdTupleArray(data, 2);
-        var n = data.length, lnyMean = 0.0, xMean = 0.0, Sxx = 0.0, Syy = 0.0, Sxy = 0.0;
+        var n = data.length, x_1Mean = 0.0, yMean = 0.0, Sxx = 0.0, Syy = 0.0, Sxy = 0.0;
         for(var i=0; i<n; i++) {
-            lnyMean += (1.0 / n) * Math.log(data[i][1]);
-            xMean += (1.0 / n) * data[i][0];
+            x_1Mean += (1.0 / n) * Math.pow(data[i][0], -1);
+            yMean += (1.0 / n) * data[i][1];
         }
         for(var i=0; i<n; i++) {
-            Sxx += Math.pow(data[i][0] - xMean, 2);
-            Syy += Math.pow(Math.log(data[i][1]) - lnyMean, 2);
-            Sxy += (data[i][0] - xMean) * (Math.log(data[i][1]) - lnyMean);
+            Sxx += Math.pow(Math.pow(data[i][0], -1) - x_1Mean, 2);
+            Syy += Math.pow(data[i][1] - yMean, 2);
+            Sxy += (Math.pow(data[i][0], -1) - x_1Mean) * (data[i][1] - yMean);
         }
         return Sxy / (Math.sqrt(Sxx) * Math.sqrt(Syy));
     }

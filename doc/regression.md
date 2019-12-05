@@ -71,6 +71,16 @@ Additionally there is the logarithmic regression.
 		<td>new EExponentialRegression();</td>
 		<td><img src="/doc/media/regression_illustration/e_exponential_regression.jpg" width="100%" /></td>
 	</tr>
+	<tr>
+		<td>Inverse</td>
+		<td>new InverseRegression();</td>
+		<td><img src="/doc/media/regression_illustration/inverse_regression.jpg" width="100%" /></td>
+	</tr>
+	<tr>
+		<td>Power</td>
+		<td>new PowerRegression();</td>
+		<td><img src="/doc/media/regression_illustration/power_regression.jpg" width="100%" /></td>
+	</tr>
 </table>
 </p>
 

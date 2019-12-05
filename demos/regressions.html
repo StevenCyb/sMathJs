@@ -12,6 +12,8 @@
         <script src="../src/regression/logarithmic_regression.js"></script>
         <script src="../src/regression/ab_exponential_regression.js"></script>
         <script src="../src/regression/e_exponential_regression.js"></script>
+        <script src="../src/regression/inverse_regression.js"></script>
+        <script src="../src/regression/power_regression.js"></script>
         <style>
             table {margin: 0 auto; background-color: #cccccc; padding: 5px 10px; }
             table input, table select {width: 100%;}
@@ -105,6 +107,10 @@
                     worker = new AbExponentialRegression();
                 } else if(regressionOption.startsWith("e_exponential")) {
                     worker = new EExponentialRegression();
+                } else if(regressionOption.startsWith("inverse")) {
+                    worker = new InverseRegression();
+                } else if(regressionOption.startsWith("power")) {
+                    worker = new PowerRegression();
                 } else {
                     alert("Regression \"" + regressionOption + "\" unknown.");
                 }
@@ -171,6 +177,10 @@
                         worker = new AbExponentialRegression(optimizer);
                     } else if(regressionOption.startsWith("e_exponential")) {
                         worker = new EExponentialRegression(optimizer);
+                    } else if(regressionOption.startsWith("inverse")) {
+                        worker = new InverseRegression(optimizer);
+                    } else if(regressionOption.startsWith("power")) {
+                        worker = new PowerRegression(optimizer);
                     } else {
                         alert("Regression \"" + regressionOption + "\" unknown.");
                     }
@@ -318,6 +328,8 @@
                         <option value="logarithmic">Logarithmic</option>
                         <option value="ab_exponential">AB-Exponential</option>
                         <option value="e_exponential">E-Exponential</option>
+                        <option value="inverse">Inverse</option>
+                        <option value="power">Power</option>
                     </select>
                 </td>
                <td id="optimizer-options" rowspan="5">
