@@ -2,7 +2,6 @@
 This project was mainly developed for learning purposes, but will also be used in a future planned project. 
 The project isn't finished yet. Currently the following tasks are planned/left:
  - Lib & Demo for Regressions
-    - Hyperbolic-Regression
     - Update sub-/main-documentations + Rewrite functions descriptions
 - Lib & Demo Distribution
     - Create sub-/main-documentations with equations and descriptions + Rewrite function descriptions
