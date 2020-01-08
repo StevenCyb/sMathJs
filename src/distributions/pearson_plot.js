@@ -92,7 +92,7 @@ class PearsonPlot {
 	 * Return:
 	 * void
 	 */
-    line(ctx, a, b, lineWidth, color, lineDash=null) {
+    drawLine(ctx, a, b, lineWidth, color, lineDash=null) {
         ctx.save();
         ctx.lineWidth = lineWidth;
         ctx.strokeStyle = color;
@@ -228,7 +228,7 @@ class PearsonPlot {
         //// Setup
         // Create local var because I dont wanna use "this." every time...
         var canvas = this.bufferCanvas, ctx = canvas.getContext('2d'), hCells = this.hCells, wCells = this.wCells,
-           polygon = this.drawPolygon, line = this.line, cicle = this.drawCicle, circle = this.drawCircle, text = this.drawText,
+           polygon = this.drawPolygon, line = this.drawLine, cicle = this.drawCicle, circle = this.drawCircle, text = this.drawText,
            coordinates = this.coordinates, findMaxCoordinate = this.findMaxCoordinate,
            dataAvailable = (this.data != null && this.data.length > 0); 
         // Change canvas DPI and size

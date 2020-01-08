@@ -1,0 +1,266 @@
+<html>
+	<head>
+        <title>Demo - Clustering</title>
+        <meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <script src="../src/utils.js"></script>
+        <script src="../src/clustering/k_means.js"></script>
+        <script src="../src/clustering/k_median.js"></script>
+        <script src="../src/clustering/k_medoids.js"></script>
+        <style>
+            table {margin: 0 auto; background-color: #cccccc; padding: 5px 10px; }
+            table input, table select {width: 100%;}
+            table td {padding: 0 10px;}
+            input[type=button] {cursor: pointer;}
+            input:disabled, select:disabled {cursor: no-drop;}
+            tr.separator td {border-top: 1px solid #868686; padding-top: 5px;}
+            canvas {-moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; margin: 0 auto; width: 300px; height: 300px; margin-top: 5px; margin-left: calc(50% - 150px);}
+            .options { width: 240px; height: 50px; font-size: 12px; overflow-x: hidden; overflow-y: auto; text-align: right;}
+            .options input, .options select {width: 150px;}
+        </style>
+        <script>
+            var toggleClusteringButton = null, speed = 10, stopFlag = false;
+                clusteringObject = null,
+                mainCanvas = null, mainCtx = null, 
+                bufferCanvas = document.createElement('canvas'), bufferCtx = bufferCtx = bufferCanvas.getContext('2d'), 
+                iterations = 0, points = [],
+                colorPalette = ["#ffb3ba", "#d77fa1", "#698474", "#ffad87", "#698474", "#bae1ff"];
+
+            function drawLine(ctx, a, b, lineWidth, color) {
+                ctx.save();
+                ctx.lineWidth = lineWidth;
+                ctx.strokeStyle = color;
+                ctx.beginPath();
+                ctx.moveTo(a[0], a[1]);
+                ctx.lineTo(b[0], b[1]);
+                ctx.stroke();
+                ctx.restore();
+            }
+            function drawCircle(ctx, center, radius, color) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(center[0], center[1], radius, 0, 2 * Math.PI);
+                ctx.fillStyle = color;
+                ctx.fill();
+                ctx.restore();
+            }
+            function drawStar(ctx, center, color, size=10) {
+                ctx.save();
+                ctx.fillStyle = color;
+                ctx.strokeStyle = "#000000";
+                ctx.beginPath();
+                ctx.moveTo(center[0], center[1] - size);
+                ctx.lineTo(center[0] + size, center[1] + size);
+                ctx.lineTo(center[0] - size, center[1] + size);
+                ctx.lineTo(center[0], center[1] - size);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            function canvasInitialization() {
+                toggleClusteringButton = document.getElementById("toggle-clustering-button");
+                mainCanvas = document.getElementById("canvas");
+                mainCtx = mainCanvas.getContext('2d');
+                // Add interaction evnt
+                mainCanvas.addEventListener('mousedown', interact);
+                // Change canvas DPI and size
+                var rect = mainCanvas.getBoundingClientRect();
+                mainCanvas.width = rect.width * 2;
+                mainCanvas.height = rect.height * 2;
+                var width = mainCanvas.width, height = mainCanvas.height;
+                bufferCanvas.width = width;
+                bufferCanvas.height = height;
+                // Clear canves
+                bufferCtx.clearRect(0, 0,  width, height);
+                // Draw grid
+                for(var i=0.0; i<1.0; i+=0.1) {
+                    drawLine(bufferCtx, [height * i, 0], [height * i, width], 1, "#aaaaaa");
+                    drawLine(bufferCtx, [0, width * i], [height, width * i], 1, "#aaaaaa");
+                }
+                updateView();
+            }
+
+            function updateView() {
+                var rect = mainCanvas.getBoundingClientRect();
+                mainCtx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+                mainCtx.drawImage(bufferCanvas, 0, 0);
+                for(var i=0; i<points.length; i++) {
+                    var color = "#03adfc";
+                    if(clusteringObject != null) {
+                        color = colorPalette[clusteringObject.classify(points[i])[0]];
+                    }
+                    drawCircle(mainCtx, [(points[i][0] / 100) * mainCanvas.width, (points[i][1] / 100) * mainCanvas.height], 5, color);
+                }
+                if(clusteringObject != null) {
+                    for(var i=0; i<clusteringObject.centroids.length; i++) {
+                        drawStar(mainCtx, [(clusteringObject.centroids[i][0] / 100) * mainCanvas.width, (clusteringObject.centroids[i][1] / 100) * mainCanvas.height], colorPalette[i]);
+                    }
+                }
+                mainCtx.save();
+                mainCtx.font = "24px Arial";
+                mainCtx.fillText("Iter.: " + iterations, 20, 30);
+                mainCtx.restore();
+            }
+
+            function interact(e) {
+                if(toggleClusteringButton.value == "Run") {
+                    var rect = mainCanvas.getBoundingClientRect(),
+                        x = parseInt(((event.clientX - rect.left) / rect.width) * 100),
+                        y = parseInt(((event.clientY - rect.top) / rect.height) * 100);
+                    if(e.button == 0) {
+                        for(var i=0; i<points.length; i++) {
+                            if(points[i][0] == x && points[i][1] == y) {
+                                return;
+                            }
+                        }
+                        points.push([x, y]);
+                        updateView();
+                    } else if(e.button == 2) {
+                        for(var i=0; i<points.length; i++) {
+                            if(Math.abs(points[i][0] - x) <= 1 && Math.abs(points[i][1] - y) <= 1) {
+                                points.splice(i, 1);
+                                updateView();
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+
+            function interactionMode(state) {
+                var inputs = document.getElementsByTagName("input");
+                var selects = document.getElementsByTagName("select");
+                for (var i = 0; i < inputs.length; i++) {
+                    inputs[i].disabled = !state;
+                }
+                for (var i = 0; i < selects.length; i++) {
+                    selects[i].disabled = !state;
+                }
+                toggleClusteringButton.disabled = false;
+            }
+
+            function toggleClustering() {
+                if(toggleClusteringButton.value == "Run") {
+                    toggleClusteringButton.value = "Stop";
+                    try {
+                        if(clusteringObject == null) {
+                            iterations = 0;
+                            switch (document.getElementById("clustering-option").value) {
+                                case "k_means":
+                                    clusteringObject = new KMeansClustering(points, parseInt(document.getElementById("option-k").value));
+                                    clusteringObject.randomCentroidInitialization();
+                                    break;
+                                case "k_means_pp":
+                                    clusteringObject = new KMeansClustering(points, parseInt(document.getElementById("option-k").value));
+                                    clusteringObject.plusPlusCentroidInitialization();
+                                    break;
+                                case "k_median":
+                                    clusteringObject = new KMedianClustering(points, parseInt(document.getElementById("option-k").value));
+                                    clusteringObject.randomCentroidInitialization();
+                                    break;
+                                case "k_median_pp":
+                                    clusteringObject = new KMedianClustering(points, parseInt(document.getElementById("option-k").value));
+                                    clusteringObject.plusPlusCentroidInitialization();
+                                    break;
+                                case "k_medoids": 
+                                    clusteringObject = new KMedoids(points, parseInt(document.getElementById("option-k").value));
+                                    clusteringObject.randomCentroidInitialization();
+                                    break;
+                                case "k_medoids_pp": 
+                                    clusteringObject = new KMedoids(points, parseInt(document.getElementById("option-k").value));
+                                    clusteringObject.plusPlusCentroidInitialization();
+                                    break;
+                            }
+                        }
+                        speed = parseInt(document.getElementById("option-speed").value);
+                        stopFlag = false;
+                        interactionMode(false);
+                        updateView();
+                        setTimeout(loop, speed);
+                    } catch(e) {
+                        alert(e);
+                        toggleClusteringButton.value = "Run";
+                    }
+                } else {
+                    stopFlag = true;
+                }
+            }
+
+            function reset() {
+                clusteringObject = null;
+                iterations = 0;
+                updateView();
+            }
+
+            function loop() {
+                iterations++;
+                try {
+                    if(stopFlag) {
+                        interactionMode(true);
+                        toggleClusteringButton.value = "Run";
+                    } else {
+                        clusteringObject.performStep();
+                        setTimeout(loop, speed);
+                    }
+                }  catch(e) {
+                    alert(e);
+                    interactionMode(true);
+                    toggleClusteringButton.value = "Run";
+                }
+                updateView();
+            }
+        </script>
+    </head>
+    <body onload="canvasInitialization()">
+        <table>
+            <tr>
+                <td colspan="2" width="145px">Clustering-Algorithm:</td colspan="2">
+                <td>
+                    <select id ="clustering-option">
+                        <option value="k_means">K-Means</option>
+                        <option value="k_means_pp">K-Means++</option>
+                        <option value="k_median">K-Median</option>
+                        <option value="k_median_pp">K-Median++</option>
+                        <option value="k_medoids">K-Medoids (PAM)</option>
+                        <option value="k_medoids_pp">K-Medoids++ (PAM)</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Options:</td>
+                <td colspan="2">
+                    <div class="options">
+                        <label for="option-k">k: 
+                            <select id ="option-k">
+                                <option selected>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                            </select>
+                        </label>
+                        <br>
+                        <label for="option-speed">Iter. Speed: 
+                            <select id ="option-speed">
+                                <option selected>10</option>
+                                <option>100</option>
+                                <option>1000</option>
+                                <option>2000</option>
+                            </select>
+                        </label>
+                    </div>
+                </td>
+            </tr width="145px">
+            <tr class="separator">
+                <td><input type="button" value="Reset" onclick="reset();"></td>
+                <td colspan="2"><input type="button" id="toggle-clustering-button" value="Run" onclick="toggleClustering();"></td>
+            </tr>
+            <tr>
+                <td colspan="3">Click on the canvas to add (Mouse-L) or remove (Mouse-R) points.</canvas></td>
+            </tr>
+        </table>   
+        <canvas id="canvas" oncontextmenu="event.preventDefault();"></canvas>      
+    </body>
+</html>

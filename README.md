@@ -12,6 +12,7 @@ The project isn't finished yet. Currently the following tasks are planned/left:
 - [How To Use It](#how_to_use_it)
 - [Utils](#utils)
 - [Regression](#regression)
+- [Clustering](#clustering)
 - [Distributions](#distributions)
     - [Pearson-Plot](#pearson)
     - [Binomial Distribution](#binomial)
@@ -61,6 +62,13 @@ For data fitting `utils`, `optimizer` and `regression`.
 <script src="src/regression/inverse_regression.js"></script>
 <script src="src/regression/power_regression.js"></script>
 ```
+For data clustering `utils` and the corresponding clustering implementation.
+```
+<script src="src/utils.js"></script>
+<script src="src/clustering/k_means.js"></script>
+<script src="src/clustering/k_median.js"></script>
+<script src="src/clustering/k_medoids.js"></script>
+```
 <a name="utils"></a>
 ## Utils
 The utils script contains functions that are used multiple times in different distributions. A description of the functionalities can be found [here](/doc/utils.md).
@@ -72,6 +80,17 @@ A description of the regression and optimizer functionalities can be found [here
 <p float="middle">
   <img src="/doc/media/regression_illustration/regression_linear.gif" width="48%" />
   <img src="/doc/media/regression_illustration/regression_overview.gif" width="48%" /> 
+</p>
+
+<a name="clustering"></a>
+## Clustering
+This part of the library provides some basic clustering concepts. 
+These include K-Means, K-Median and K-Medoids clustering.
+A description of the functionalities can be found [here](/doc/clustering.md).
+<p float="middle">
+  <img src="/doc/media/clustering_illustration/k_means_clustering.gif" width="32%" />
+  <img src="/doc/media/clustering_illustration/k_median_clustering.gif" width="32%" /> 
+  <img src="/doc/media/clustering_illustration/k_medoids_clustering.gif" width="32%" /> 
 </p>
 
 <a name="distributions"></a>

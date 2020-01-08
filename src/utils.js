@@ -119,6 +119,42 @@ class SMathJsUtils {
     }
 
     /*
+    * Calculate the euclidian distance between two points
+    * Parameter:
+    * a: Fist point
+    * b: second point
+    * Return
+    * Distance
+    */
+    static euclidianDistance(a, b) {
+        SMathJsUtils.isValidNdTuple(a, a.length);
+        SMathJsUtils.isValidNdTuple(b, a.length);
+        var sum = 0;
+        for(var n=0; n<a.length; n++) {
+            sum += Math.pow(a[n] - b[n], 2);
+        }
+        return Math.sqrt(sum);
+    }
+
+    /*
+    * Calculate the manhattan distance between two points
+    * Parameter:
+    * a: Fist point
+    * b: second point
+    * Return
+    * Distance
+    */
+    static manhattanDistance(a, b) {
+        SMathJsUtils.isValidNdTuple(a, a.length);
+        SMathJsUtils.isValidNdTuple(b, a.length);
+        var sum = 0.0;
+        for(var n=0; n<a.length; n++) {
+            sum += Math.abs(a[n] - b[n]);
+        }
+        return sum;
+    }
+
+    /*
     * Calculate the faculty of n (!n).
     * Parameter:
     * n: Number for which the faculty should be calculated
@@ -255,16 +291,44 @@ class SMathJsUtils {
     }
 
     /*
-    * Give the median of an array.
+    * Give the median of an array (featurewise).
     * Parameter:
     * arr: Array for which to search median
     * Return:
-    * Median
+    * Median as single value or array (featurewise)
     */
-    static median(arr) {
-        this.isValidNumberArray(arr);
-        arr = this.timsortASC(arr);
-        return arr[(Math.round((arr.length + 1) / 2) - 1)];
+    static median(arr, features=0) {
+        if(features == 0) {
+            this.isValidNumberArray(arr);
+            arr = this.timsortASC(arr);
+            var center = arr.length / 2;
+            if(arr.length % 2 != 0) {
+                return arr[parseInt(center)];
+            }
+            return (arr[center] + arr[center - 1]) / 2;
+        } else {
+            this.isValidNdTupleArray(arr, features);
+            var medianAxis = [], axis = new Array(features).fill(null);
+            for(var i=0; i<arr.length; i++) {
+                for(var j=0; j<features; j++) {
+                    if(axis[j] == null) {
+                        axis[j] = [arr[i][j]];
+                    } else {
+                        axis[j].push(arr[i][j]);
+                    }
+                }
+            }
+            for(var i=0; i<features; i++) {
+                axis[i] = this.timsortASC(axis[i]);
+                var center = axis[i].length / 2;
+                if (axis[i].length % 2 != 0) {
+                    medianAxis.push(axis[i][parseInt(center)]);
+                } else {
+                    medianAxis.push((axis[i][center] + axis[i][center - 1]) / 2);
+                }
+            }
+            return medianAxis;
+        }
     }
 
     /*
@@ -318,74 +382,90 @@ class SMathJsUtils {
     }
 
     /*
-    * Sort an array with Timsort sorting algorithm.
+    * Sort an array with Timsort sorting algorithm in ASC order.
+    * Parameter:
+    * arr: Array to sort
+    * sortFeature: Indes to sort (optional) in case of tuple array
+    * Return:
+    * Sorted array
+    */
+    static timsortASC(arr, sortFeature=0) {
+        if(sortFeature > 0) {
+            this.isValidNdTupleArray(arr, arr[0].length);
+        } else {
+            this.isValidNumberArray(arr);
+        }
+        var n = arr.length,
+            subArraySize = 32;
+        for(var i = 0; i < n; i += subArraySize){
+            // Insert sort
+            var left = i, right = Math.min((i + 31), (n - 1));
+            for(var i = (left + 1); i <= right; i++){
+                var temp = arr[i],
+                j = i - 1; 
+                if(sortFeature==0) {
+                    while (j >= left && arr[j] > temp) {
+                        arr[j + 1] = arr[j]; 
+                        j--; 
+                    }  
+                } else {
+                    while (j >= left && arr[j][sortFeature] > temp[sortFeature]) {
+                        arr[j + 1] = arr[j]; 
+                        j--; 
+                    }  
+                }
+                arr[j + 1] = temp; 
+            }
+        }
+        for(var size = subArraySize; size < n; size *= 2){
+            for(var left = 0; left < n; left += (2 * size)){
+                var middle = left + size - 1, right = Math.min((left + 2 * size - 1), (n - 1));
+                // Merge
+                var len1 = middle - left + 1, 
+                    len2 = right - middle,
+                    left1 = [],
+                    right1 = [],
+                    i = 0,
+                    j = 0, 
+                    k = left;
+                for (var x = 0; x < len1; x++){ 
+                    left1[x] = arr[left + x]; 
+                } 
+                for (var x = 0; x < len2; x++){ 
+                    right1[x] = arr[middle + 1 + x]; 
+                }  
+                while (i < len1 && j < len2){ 
+                    if ((sortFeature==0?left1[i]:left1[i][sortFeature]) <= (sortFeature==0?right1[j]:right1[j][sortFeature])){ 
+                        arr[k] = left1[i]; 
+                        i++; 
+                    } else { 
+                        arr[k] = right1[j]; 
+                        j++; 
+                    } 
+                    k++; 
+                } 
+                while (i < len1){ 
+                    arr[k] = left1[i]; 
+                    k++; 
+                    i++; 
+                } 
+                while (j < len2){ 
+                    arr[k] = right1[j]; 
+                    k++; 
+                    j++; 
+                } 
+            }
+        }
+        return arr;
+    }
+
+    /*
+    * Sort an array with Timsort sorting algorithm in DESC order.
     * Parameter:
     * arr: Array to sort
     * Return:
     * Sorted array
     */
-   /*
-    * START */
-    static insertionSort(arr, left, right) {
-        for(var i = (left + 1); i <= right; i++){
-            var temp = arr[i], 
-                j = i - 1; 
-            while (arr[j] > temp && j >= left){ 
-                arr[j + 1] = arr[j]; 
-                j--; 
-            } 
-            arr[j + 1] = temp; 
-        }
-    }
-    static merge(arr, left, middle, right) {
-        var len1 = middle - left + 1, 
-            len2 = right - middle,
-            left1 = [],
-            right1 = [],
-            i = 0,
-            j = 0, 
-            k = left;
-        for (var x = 0; x < len1; x++){ 
-            left1[x] = arr[left + x]; 
-        } 
-        for (var x = 0; x < len2; x++){ 
-            right1[x] = arr[middle + 1 + x]; 
-        }  
-        while (i < len1 && j < len2){ 
-            if (left1[i] <= right1[j]){ 
-                arr[k] = left1[i]; 
-                i++; 
-            } else { 
-                arr[k] = right1[j]; 
-                j++; 
-            } 
-            k++; 
-        } 
-        while (i < len1){ 
-            arr[k] = left1[i]; 
-            k++; 
-            i++; 
-        } 
-        while (j < len2){ 
-            arr[k] = right1[j]; 
-            k++; 
-            j++; 
-        } 
-    }
-    static timsortASC(arr) {
-        this.isValidNumberArray(arr);
-        var n = arr.length,
-            subArraySize = 32;
-        for(var i = 0; i < n; i += subArraySize){
-            this.insertionSort(arr, i, Math.min((i + 31), (n - 1)));
-        }
-        for(var size = subArraySize; size < n; size *= 2){
-            for(var left = 0; left < n; left += (2 * size)){
-                this.merge(arr, left, left + size - 1,  Math.min((left + 2 * size - 1), (n - 1)));  
-            }
-        }
-        return arr;
-    }
     static timsortDESC(arr) {
         this.isValidNumberArray(arr);
         var nArr = [];
@@ -394,6 +474,4 @@ class SMathJsUtils {
         });
         return nArr;
     }
-    /*
-    * END */
 }
