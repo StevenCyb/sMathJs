@@ -8,6 +8,7 @@
         <script src="../src/clustering/k_means.js"></script>
         <script src="../src/clustering/k_median.js"></script>
         <script src="../src/clustering/k_medoids.js"></script>
+        <script src="../src/clustering/fuzzy.js"></script>
         <style>
             table {margin: 0 auto; background-color: #cccccc; padding: 5px 10px; }
             table input, table select {width: 100%;}
@@ -92,11 +93,11 @@
                     if(clusteringObject != null) {
                         color = colorPalette[clusteringObject.classify(points[i])[0]];
                     }
-                    drawCircle(mainCtx, [(points[i][0] / 100) * mainCanvas.width, (points[i][1] / 100) * mainCanvas.height], 5, color);
+                    drawCircle(mainCtx, [(points[i][0] / 100) * mainCanvas.width, ((points[i][1] / 100) * mainCanvas.height)], 5, color);
                 }
                 if(clusteringObject != null) {
                     for(var i=0; i<clusteringObject.centroids.length; i++) {
-                        drawStar(mainCtx, [(clusteringObject.centroids[i][0] / 100) * mainCanvas.width, (clusteringObject.centroids[i][1] / 100) * mainCanvas.height], colorPalette[i]);
+                        drawStar(mainCtx, [(clusteringObject.centroids[i][0] / 100) * mainCanvas.width, ((clusteringObject.centroids[i][1] / 100) * mainCanvas.height)], colorPalette[i]);
                     }
                 }
                 mainCtx.save();
@@ -173,6 +174,14 @@
                                     clusteringObject = new KMedoids(points, parseInt(document.getElementById("option-k").value));
                                     clusteringObject.plusPlusCentroidInitialization();
                                     break;
+                                case "fuzzy": 
+                                    clusteringObject = new FuzzyClustering(points, parseInt(document.getElementById("option-k").value));
+                                    clusteringObject.randomCentroidInitialization();
+                                    break;
+                                case "fuzzy_pp": 
+                                    clusteringObject = new FuzzyClustering(points, parseInt(document.getElementById("option-k").value));
+                                    clusteringObject.plusPlusCentroidInitialization();
+                                    break;
                             }
                         }
                         speed = parseInt(document.getElementById("option-speed").value);
@@ -214,18 +223,20 @@
             }
         </script>
     </head>
-    <body onload="canvasInitialization()">
+    <body onload="canvasInitialization();">
         <table>
             <tr>
                 <td colspan="2" width="145px">Clustering-Algorithm:</td colspan="2">
                 <td>
-                    <select id ="clustering-option">
+                    <select id ="clustering-option" onchange="reset();">
                         <option value="k_means">K-Means</option>
                         <option value="k_means_pp">K-Means++</option>
                         <option value="k_median">K-Median</option>
                         <option value="k_median_pp">K-Median++</option>
                         <option value="k_medoids">K-Medoids (PAM)</option>
                         <option value="k_medoids_pp">K-Medoids++ (PAM)</option>
+                        <option value="fuzzy">Fuzzy</option>
+                        <option value="fuzzy_pp">Fuzzy++</option>
                     </select>
                 </td>
             </tr>
