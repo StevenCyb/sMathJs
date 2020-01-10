@@ -8,9 +8,9 @@ These include K-Means, K-Median and K-Medoids clustering.
 </p>
 
 ## Clustering Classes
-Currently there are the clustering classes `KMeansClustering`, `KMedianClustering` and `KMedoids`. These classes have the same functions and constructors with corresponding prameters.
+Currently there are the clustering classes `KMeansClustering`, `KMedianClustering`, `KMedoids` and `FuzzyClustering`. These classes have the same functions and constructors with corresponding prameters.
 ### Constructor
-Constructor of this class to instanciate a object. 
+Constructor of this class to instanciate a object.
 ```
 /*
 * Parameter:
